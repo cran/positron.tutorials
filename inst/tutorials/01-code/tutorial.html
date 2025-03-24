@@ -1,0 +1,2235 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="author" content="David Kane" />
+
+
+<meta name="progressive" content="true" />
+<meta name="allow-skip" content="false" />
+<meta name="learnr-version-prerender" content="0.11.5" />
+
+<title>Positron and code</title>
+
+<!-- header-includes START -->
+<!-- HEAD_CONTENT -->
+<!-- header-includes END -->
+<!-- HEAD_CONTENT -->
+
+<!-- highlightjs -->
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+<!-- taken from https://github.com/rstudio/rmarkdown/blob/de8a9c38618903627ca509f5401d50a0876079f7/inst/rmd/h/default.html#L293-L343 -->
+<!-- tabsets -->
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+<!-- end tabsets -->
+
+
+</head>
+
+<body>
+<a class='sr-only sr-only-focusable visually-hidden-focusable' href='#learnr-tutorial-content'>Skip to Tutorial Content</a>
+
+
+
+<div class="pageContent band">
+<main class="bandContent page">
+
+<article class="topics" id="learnr-tutorial-content">
+
+<script>
+
+function transfer_code(elem){
+  Shiny.setInputValue("js_to_server", elem.previousElementSibling.dataset.label);
+  
+}
+
+Shiny.addCustomMessageHandler('set-exercise-code', function(x) {
+  var el = $(`.tutorial-exercise[data-label="${x.label}"] .tutorial-exercise-code-editor`)
+  var editor = ace.edit($(el).attr('id'));
+  editor.getSession().setValue(x.code);
+  Shiny.setInputValue("js_to_server", null);
+})
+</script>
+<div id="section-information" class="section level2">
+<h2>Information</h2>
+<div id="section-section" class="section level3">
+<h3></h3>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="name" class="tutorial-question panel-body">
+<div id="name-answer_container" class="shiny-html-output"></div>
+<div id="name-message_container" class="shiny-html-output"></div>
+<div id="name-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="email" class="tutorial-question panel-body">
+<div id="email-answer_container" class="shiny-html-output"></div>
+<div id="email-message_container" class="shiny-html-output"></div>
+<div id="email-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="ID" class="tutorial-question panel-body">
+<div id="ID-answer_container" class="shiny-html-output"></div>
+<div id="ID-message_container" class="shiny-html-output"></div>
+<div id="ID-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+<!-- Need to deal with the issue of keyboard short cuts. For now, I have mostly deleted them. Need to figure out which set to use and how to add them back. -->
+<!-- Make the experience good for Windows users. Key issue is adding Windows hints/clarifications to questions which are written implicitly assuming students are on a Mac. -->
+<!-- What about Chromebooks??!! Too much to worry about. -->
+<!-- Teach about show_file() and how it won't work without doing library(tutorial.helpers) in the Console. First, show it fails. Second, do library() command in Console. Third, show it works now. Fourth, restart R and show it now fails. Lesson: Whenever you get "function not found," it probably means a failure to load a library. -->
+<!-- To Format the chunk labels you need to comment out the example comment line in Script 1. And there is at least one more example later. -->
+<!-- We do not use the Terminal in this tutorial. Maybe mention it, though? -->
+</div>
+</div>
+<div id="section-introduction" class="section level2">
+<h2>Introduction</h2>
+<div id="section-section-1" class="section level3">
+<h3></h3>
+<p>This tutorial teaches you how to use <a
+href="https://positron.posit.co"><strong>Positron</strong></a> with <a
+href="https://www.r-project.org/about.html"><strong>R</strong></a>
+scripts.</p>
+</div>
+</div>
+<div id="section-checking-your-setup" class="section level2">
+<h2>Checking your setup</h2>
+<div id="section-section-2" class="section level3">
+<h3></h3>
+<!-- Make it as easy to use for Windows students. For example, the use of forward versus backward slashes. -->
+<!-- Should provide better guidance for Windows students. I think that their ~ directories are actually their Documents/ folders, which are often backed up on One Drive. So, have them put, by hand, a projects directory on their Desktop and then use that. Or maybe dir.create("~/../Desktop/projects) would work. -->
+<!-- MP: I remember that when I first set up R/RStudio/RTools, my ~ directory was C:\\Users\\mark.p\\. It seems like RS typically defaults ~ to %USERPROFILE% -- see https://tinyurl.com/gpt-default-tilde.  -->
+<p>This tutorial assumes that you have read and completed all the steps
+in the “Tutorials in Positron” tutorial from the <a
+href="https://ppbds.github.io/tutorial.helpers/"><strong>tutorial.helpers</strong></a>
+package, i.e., this package. We will ask you to
+<strong>c</strong>opy/<strong>p</strong>aste the
+<strong>c</strong>ommand/<strong>r</strong>esponse so often, we shorten
+this instruction to CP/CR.</p>
+</div>
+<div id="section-exercise-1" class="section level3">
+<h3>Exercise 1</h3>
+<p>Load the <strong>tutorial.helpers</strong> package into your R
+Console using the <code>library()</code> function.</p>
+<p>Run <code>search()</code> in the Console to see the libraries that
+you’ve currently loaded. CP/CR. That is, copy and paste that command and
+the result into the space below.</p>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="checking-your-setup-1" class="tutorial-question panel-body">
+<div id="checking-your-setup-1-answer_container" class="shiny-html-output"></div>
+<div id="checking-your-setup-1-message_container" class="shiny-html-output"></div>
+<div id="checking-your-setup-1-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+</div>
+<div id="section-section-3" class="section level3">
+<h3></h3>
+<p>Your answer should look something like this:</p>
+<pre><code>&gt; library(tutorial.helpers)
+&gt; search()
+ [1] &quot;.GlobalEnv&quot;               &quot;package:tutorial.helpers&quot; &quot;tools:rstudio&quot;           
+ [4] &quot;tools:positron&quot;           &quot;package:stats&quot;            &quot;package:graphics&quot;        
+ [7] &quot;package:grDevices&quot;        &quot;package:utils&quot;            &quot;package:datasets&quot;        
+[10] &quot;package:methods&quot;          &quot;Autoloads&quot;                &quot;package:base&quot;            
+&gt;</code></pre>
+<p>Don’t worry if your answer does not match our answer exactly, either
+in this question or in any other question.</p>
+</div>
+<div id="section-section-4" class="section level3">
+<h3></h3>
+<p>The string “package:tutorial.helpers” should be in the output. If you
+skip this step, commands like <code>show_file()</code> will not work
+without a <code>tutorial.helpers::</code> prefix.</p>
+</div>
+<div id="section-exercise-2" class="section level3">
+<h3>Exercise 2</h3>
+<p>Load the <strong>tidyverse</strong> package into your R Console using
+the <code>library()</code> function.</p>
+<p>If this fails, the most likely cause is that you failed to installed
+the <strong>tidyverse</strong> package, among others. Run
+<code>install.package('tidyverse')</code> in the Console to fix this and
+then try <code>library(tidyverse)</code> again.</p>
+</div>
+<div id="section-section-5" class="section level3">
+<h3></h3>
+<p>Run <code>search()</code> in the Console to see the libraries that
+you’ve currently loaded. CP/CR. That is, copy and paste that command and
+the result into the space below.</p>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="checking-your-setup-2" class="tutorial-question panel-body">
+<div id="checking-your-setup-2-answer_container" class="shiny-html-output"></div>
+<div id="checking-your-setup-2-message_container" class="shiny-html-output"></div>
+<div id="checking-your-setup-2-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+</div>
+<div id="section-section-6" class="section level3">
+<h3></h3>
+<p>There should be strings such as “package:tidyverse” in the output.
+These are the packages that are currently loaded in your workspace.</p>
+</div>
+<div id="section-exercise-3" class="section level3">
+<h3>Exercise 3</h3>
+<p>Look at the top left of your Console. Here you should see the version
+of R you are running. It should look something like the image below.</p>
+<p><img src="images/r-version.png" width="90%" /></p>
+<p>Type <code>R.version$version.string</code> into the Console and hit
+<code>Enter</code>. CP/CR.</p>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="checking-your-setup-3" class="tutorial-question panel-body">
+<div id="checking-your-setup-3-answer_container" class="shiny-html-output"></div>
+<div id="checking-your-setup-3-message_container" class="shiny-html-output"></div>
+<div id="checking-your-setup-3-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+</div>
+<div id="section-section-7" class="section level3">
+<h3></h3>
+<p>This should be the same as the version you saw at the top left of the
+Console. Make sure it is the <a href="https://cran.r-project.org/">most
+recently released</a> version of R.</p>
+</div>
+<div id="section-exercise-4" class="section level3">
+<h3>Exercise 4</h3>
+<p>Shortly, we will create a new “project” for you to work in. Before we
+do this, it might be useful to understand where you are right now.</p>
+<p>In the Console, run <code>getwd()</code>. CP/CR.</p>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="checking-your-setup-4" class="tutorial-question panel-body">
+<div id="checking-your-setup-4-answer_container" class="shiny-html-output"></div>
+<div id="checking-your-setup-4-message_container" class="shiny-html-output"></div>
+<div id="checking-your-setup-4-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+</div>
+<div id="section-section-8" class="section level3">
+<h3></h3>
+<p>This function returns the “path” to your current working directory. A
+path is simply the information which allows you to reach a location on
+your computer. In this case, if you wanted to find the folder from which
+R is running, you would follow the path returned by
+<code>getwd()</code>.</p>
+<p>More info on paths can be found <a
+href="https://people.ischool.berkeley.edu/~kevin/unix-tutorial/section3.html">here</a>.</p>
+</div>
+<div id="section-exercise-5" class="section level3">
+<h3>Exercise 5</h3>
+<!-- DK: Test to ensure that ~ works on Windows. I am not sure if it does. The environment variable %USERPROFILE% might be what we need, perhaps only if RTools has been installed. -->
+<p>Whenever you start a new project, you will want to store it in a
+location which you can easily find. Right now, you are likely in an
+arbitrary location on your computer. It would be much more useful to
+have a location dedicated to your projects.</p>
+<p>From the Console, run <code>path.expand("~")</code>. CP/CR.</p>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="checking-your-setup-5" class="tutorial-question panel-body">
+<div id="checking-your-setup-5-answer_container" class="shiny-html-output"></div>
+<div id="checking-your-setup-5-message_container" class="shiny-html-output"></div>
+<div id="checking-your-setup-5-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+</div>
+<div id="section-section-9" class="section level3">
+<h3></h3>
+<p>My answer:</p>
+<pre><code>&gt; path.expand(&quot;~&quot;)
+[1] &quot;/Users/dkane&quot;</code></pre>
+<p>The tilde symbol, <code>~</code>, refers to a user’s home directory.
+Your answer should look similar. If you are on Windows, the directory
+separators will be backward slashes rather than forward slashes, as on
+my Mac. And there will also be a disk, generally <code>C:</code>, on
+which these directories are placed. So, on Windows, the answer might
+be:</p>
+<pre><code>&gt; path.expand(&quot;~&quot;)
+[1] &quot;C:/Users/dkane/&quot;</code></pre>
+<p>The important point is that, in almost all non-pathological set ups,
+you will have a home directory. It is important to know where that
+is.</p>
+</div>
+<div id="section-exercise-6" class="section level3">
+<h3>Exercise 6</h3>
+<p>Let’s take a look at the directories in your home directory. From the
+Console, run <code>list.files(path.expand("~"))</code>. CP/CR.</p>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="checking-your-setup-6" class="tutorial-question panel-body">
+<div id="checking-your-setup-6-answer_container" class="shiny-html-output"></div>
+<div id="checking-your-setup-6-message_container" class="shiny-html-output"></div>
+<div id="checking-your-setup-6-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+</div>
+<div id="section-section-10" class="section level3">
+<h3></h3>
+<p>My answer:</p>
+<pre><code>&gt; list.files(path.expand(&quot;~&quot;))
+ [1] &quot;Applications&quot; &quot;counties.R&quot;   &quot;Desktop&quot;      &quot;Documents&quot;    &quot;Downloads&quot;    &quot;Library&quot;     
+ [7] &quot;miniconda3&quot;   &quot;Movies&quot;       &quot;Music&quot;        &quot;Pictures&quot;     &quot;Public&quot;       &quot;temp&quot;        
+&gt;</code></pre>
+<p>If you are on a Mac, then the <code>Desktop</code> directory is a
+handy location in which to store all your coding projects. On Windows,
+however, the <code>Desktop</code> is less convenient because OneDrive
+often backs it up automatically, which can cause all sorts of problems
+later on.</p>
+<p><strong>Avoid doing data science in any directory which is backed up
+by OneDrive, or any other backup service.</strong></p>
+</div>
+<div id="section-exercise-7" class="section level3">
+<h3>Exercise 7</h3>
+<p>Let’s make a folder, and call it <code>projects</code>, and store it
+someplace sensible. <strong>If you on a Mac</strong>, then, from the
+Console, run:</p>
+<pre><code>dir.create(file.path(path.expand(&quot;~/Desktop&quot;), &quot;projects&quot;))</code></pre>
+<p><strong>If you on Windows</strong>, then, from the Console, run:</p>
+<pre><code>dir.create(file.path(path.expand(&quot;~&quot;), &quot;projects&quot;))</code></pre>
+<p>CP/CR.</p>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="checking-your-setup-7" class="tutorial-question panel-body">
+<div id="checking-your-setup-7-answer_container" class="shiny-html-output"></div>
+<div id="checking-your-setup-7-message_container" class="shiny-html-output"></div>
+<div id="checking-your-setup-7-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+</div>
+<div id="section-section-11" class="section level3">
+<h3></h3>
+<p>If that command works, you are all set. (If you get a message about
+the directory already exists, then you are also all set.) If not, you
+will need to create a <code>projects</code> directory by hand. Helpful
+resources can be found <a
+href="https://support.microsoft.com/en-us/office/create-a-new-folder-cbbfb6f5-59dd-4e5d-95f6-a12577952e17">here</a>
+for Windows, and <a
+href="https://support.apple.com/guide/mac-help/organize-files-using-folders-mh26885/mac">here</a>
+for macOS.</p>
+</div>
+<div id="section-section-12" class="section level3">
+<h3></h3>
+<p><strong>The path to your data science projects should not include any
+folders with spaces (or other weird characters) in their names.</strong>
+For example, this is a reasonable location for R projects if you are
+using a Mac:</p>
+<pre><code>/Users/dkane/Desktop/projects/</code></pre>
+<p>And if you are using Windows . . .</p>
+<pre><code>C:/Users/dkane/projects/</code></pre>
+<p>Again, you can place your <code>projects</code> directory where you
+want, as long as you keep track of where it is.</p>
+</div>
+</div>
+<div id="section-projects" class="section level2">
+<h2>Projects</h2>
+<div id="section-section-13" class="section level3">
+<h3></h3>
+<p>Good data scientists keep their work organized. You should place your
+work in different projects, which are simply folders (that is,
+directories) on your computer. Each separate project is a folder within
+your main folder for your data science work, i.e.,
+<code>/Users/dkane/Desktop/projects/</code>.</p>
+</div>
+<div id="section-exercise-1-1" class="section level3">
+<h3>Exercise 1</h3>
+<!-- DK: Consider adding more images and/or a gif. -->
+<p><strong>Read all of the instructions before starting this
+exercise.</strong></p>
+<p>From the <code>File</code> menu, select <code>New Project ...</code>.
+(You can also click on the “New Project” icon on the <em>Welcome</em>
+screen.)</p>
+<p>From the “Project Type” screen, select “R Project.” Click “Next.”
+Doing so brings up the “Create New Project” screen:</p>
+<p><img src="images/set-project.png" width="90%" /></p>
+<p>Enter <code>analysis-1</code> as your “Project Name.”” Set the
+“Parent Directory” to your <code>projects</code> directory. (You may
+have to “Browse” your computer to find it.) Do **not* initialize the
+project as a Git repository.</p>
+<p><img src="images/set-project-2.png" width="90%" /></p>
+<p>Click “Next.”</p>
+<p>The “Set up project configuration” screen should appear. Accept the
+default option, which should be the version of R which you installed.
+Click “Create.” Then:</p>
+<p><img src="images/set-project-3.png" width="90%" /></p>
+<p>You can have multiple “Windows” open when you use Positron. Getting
+used to moving between Windows is important; the short-cut-key
+`Command/Ctrl + `` may be useful.</p>
+<p>Select “New Window.” You will need to move back-and-forth between the
+two windows, one of which is this tutorial and the other of which is the
+actual <code>analysis-1</code> project in which we will be working.</p>
+</div>
+<div id="section-section-14" class="section level3">
+<h3></h3>
+<p>Now that you have read all the directions, we can go through the
+steps.</p>
+</div>
+<div id="section-section-15" class="section level3">
+<h3></h3>
+<p>In the new window, run <code>getwd()</code> in the Console. (In other
+words, you are <strong>not</strong> doing this in the Console in the
+window in which you are completely this tutorial, if only because the
+Console in this window is <em>busy</em> running the tutorial
+itself.)</p>
+<p>CP/CR.</p>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="projects-1" class="tutorial-question panel-body">
+<div id="projects-1-answer_container" class="shiny-html-output"></div>
+<div id="projects-1-message_container" class="shiny-html-output"></div>
+<div id="projects-1-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+</div>
+<div id="section-section-16" class="section level3">
+<h3></h3>
+<p>This path should now be different than our previous path, similar to
+the path below. Creating/opening a project moves the R session to that
+directory.</p>
+<pre><code>/Users/dkane/Desktop/projects/analysis-1/</code></pre>
+</div>
+<div id="section-section-17" class="section level3">
+<h3></h3>
+<p>If your path does not include your <code>projects</code> folder, you
+probably did not fill in the “Parent Directory” box correctly. It should
+be the path to your <code>projects</code> folder, including
+<code>projects</code> itself.</p>
+</div>
+<div id="section-exercise-2-1" class="section level3">
+<h3>Exercise 2</h3>
+<p>The new window should look like this:</p>
+<p><img src="images/set-project-4.png" width="90%" /></p>
+<p>The <em>Welcome</em> screen has disappeared. There is a blank,
+unsaved file named <code>Untitled-1</code> in the Editor pane. You can
+tell it is unsaved because its name is <em>italicized</em>. By deafult,
+the Explorer button in the Activity Bar on the far left has been
+activated, showing us that the <code>analysis-1</code> directory has no
+files in it yet.</p>
+</div>
+<div id="section-section-18" class="section level3">
+<h3></h3>
+<p>Run <code>list.files()</code>. Again, we are issuing all these
+commands in the other window, not the window in which this tutorial is
+running.</p>
+<p>CP/CR.</p>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="projects-2" class="tutorial-question panel-body">
+<div id="projects-2-answer_container" class="shiny-html-output"></div>
+<div id="projects-2-message_container" class="shiny-html-output"></div>
+<div id="projects-2-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+</div>
+<div id="section-section-19" class="section level3">
+<h3></h3>
+<p><code>list.files()</code> returns files contained in your current
+project. There are none so far.</p>
+<p>Keeping all the files associated with a given project — input data, R
+scripts, analytic results, and figures — together in one directory is
+very wise.</p>
+<p>Everything you need is in one place and cleanly separated from all
+the other projects that you are working on.</p>
+</div>
+</div>
+<div id="section-script-1" class="section level2">
+<h2>Script 1</h2>
+<div id="section-section-20" class="section level3">
+<h3></h3>
+<p>So far, we have only worked in the Console, but it’s quite difficult
+to type more than a few lines of code into the Console at once. One
+solution is to use <a
+href="https://r4ds.hadley.nz/workflow-scripts.html#scripts">R
+scripts</a>, files which contain a permanent copy of our code.</p>
+</div>
+<div id="section-exercise-1-2" class="section level3">
+<h3>Exercise 1</h3>
+<p>The file <code>Untitled-1</code> should already be in your Editor
+window. If it is not, you can create a new file by clicking the
+<code>File -&gt; New File ...</code> drop down menu, and then selecting
+<code>R File</code>.</p>
+</div>
+<div id="section-section-21" class="section level3">
+<h3></h3>
+<p>Type <code>5 * 5</code> into your R script file. Save the file. Name
+it <code>script-1.R</code>. (Note that R will provide the
+<code>.R</code> suffix, so you only need to type
+<code>script-1</code>.)</p>
+<p>In the Console, run:</p>
+<pre><code>tutorial.helpers::show_file(&quot;script-1.R&quot;)</code></pre>
+<p>CP/CR.</p>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="script-1-1" class="tutorial-question panel-body">
+<div id="script-1-1-answer_container" class="shiny-html-output"></div>
+<div id="script-1-1-message_container" class="shiny-html-output"></div>
+<div id="script-1-1-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+</div>
+<div id="section-section-22" class="section level3">
+<h3></h3>
+<p>You might have gotten this warning:</p>
+<pre><code>Warning message:
+In readLines(&quot;script-1.R&quot;) : incomplete final line found on &#39;script-1.R&#39;</code></pre>
+<p>This means that your file needs a blank line at the end. As a rule of
+thumb, it is always a good idea to have the last line of any text file
+be blank.</p>
+<p>R scripts are permanent copies of your code. You can save them and
+also work with them interactively.</p>
+</div>
+<div id="section-exercise-2-2" class="section level3">
+<h3>Exercise 2</h3>
+<p>Note the “Source” button, which is in the top right corner of the
+Editor.</p>
+<p><img src="images/source-button.png" width="90%" /></p>
+<p>If you hover your cursor over it, you will see “Source R File.” Press
+the Source button. (We will sometimes shorten the instruction “press the
+source button” to just “source” the script.)</p>
+<p>Note what happens in the Console. CP/CR.</p>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="script-1-2" class="tutorial-question panel-body">
+<div id="script-1-2-answer_container" class="shiny-html-output"></div>
+<div id="script-1-2-message_container" class="shiny-html-output"></div>
+<div id="script-1-2-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+</div>
+<div id="section-section-23" class="section level3">
+<h3></h3>
+<p>You answer should look like this:</p>
+<pre><code>&gt; source(&quot;/Users/dkane/Desktop/projects/analysis-1/script-1.R&quot;)</code></pre>
+</div>
+<div id="section-section-24" class="section level3">
+<h3></h3>
+<p>Whenever you run an R script file by hitting the “Source” button,
+Positron will send all the code in the file to the Console.</p>
+</div>
+<div id="section-exercise-3-1" class="section level3">
+<h3>Exercise 3</h3>
+<p>Right next to the Source button is a small downward pointing arrow.
+Clicking on it produces three options, the top (default) of which is the
+simple Source which you ran in the last question.</p>
+<p><img src="images/source-options.png" width="90%" /></p>
+<p>Select the second option: “Source R File with Echo.” CP/CR.</p>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="script-1-3" class="tutorial-question panel-body">
+<div id="script-1-3-answer_container" class="shiny-html-output"></div>
+<div id="script-1-3-message_container" class="shiny-html-output"></div>
+<div id="script-1-3-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+</div>
+<div id="section-section-25" class="section level3">
+<h3></h3>
+<p>Your answer should look like this:</p>
+<pre><code>&gt; source(&quot;/Users/dkane/Desktop/projects/analysis-1/script-1.R&quot;, echo = TRUE)
+
+&gt; 5 + 5
+[1] 10
+&gt;</code></pre>
+<p>The file is sourced, as before. But, this time, each line in the file
+is “echoed,” meaning we see both the code, <code>5 + 5</code> in this
+case, and the return value, if any, which is <code>10</code>.</p>
+</div>
+<div id="section-exercise-4-1" class="section level3">
+<h3>Exercise 4</h3>
+<p>There are often “shortcut key” combinations which perform the same
+task as clicking a button. Placing your cursor inside the R script
+window and using the keyboard shortcut
+<code>(Cmd/Ctrl) + Shift + (Return/Enter)</code> is the same as hitting
+the “Source R File with Echo” option.</p>
+<p>Note that <code>Return</code> is the name of a Mac key and
+<code>Enter</code> the name of the corresponding Windows key, just like
+<code>Cmd</code> (“Command”) is a Mac key and <code>Ctrl</code>
+(“Control”) is the equivalent Windows key. In other words, on the Mac,
+we hit <code>Cmd + Shift + Return</code> while on Windows it is
+<code>Ctrl + Shift + Enter</code>. However, typing
+<code>Return/Enter</code> all the time is annoying, so, going forward,
+we will just use <code>Enter</code>. Mac users are expected to remember
+that this means the <code>Return</code> key.</p>
+<p>Try it now. CP/CR.</p>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="script-1-4" class="tutorial-question panel-body">
+<div id="script-1-4-answer_container" class="shiny-html-output"></div>
+<div id="script-1-4-message_container" class="shiny-html-output"></div>
+<div id="script-1-4-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+</div>
+<div id="section-section-26" class="section level3">
+<h3></h3>
+<p>Using shortcut keys is quicker and more professional than clicking
+buttons.</p>
+</div>
+<div id="section-exercise-5-1" class="section level3">
+<h3>Exercise 5</h3>
+<p>In your R script, type <code>6 * 3</code> in the line after
+<code>5 + 5</code>. Save the file with <code>Cmd/Ctrl + S</code>. (Note
+that the <code>S</code> in that shortcut key just refers to the “S” key
+on your keyboard. You don’t need to capitalize it.)</p>
+<p>Source this file with echo. CP/CR.</p>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="script-1-5" class="tutorial-question panel-body">
+<div id="script-1-5-answer_container" class="shiny-html-output"></div>
+<div id="script-1-5-message_container" class="shiny-html-output"></div>
+<div id="script-1-5-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+</div>
+<div id="section-section-27" class="section level3">
+<h3></h3>
+<p>The answer is what you might expect:</p>
+<pre><code>&gt; source(&quot;/Users/dkane/Desktop/projects/analysis-1/script-1.R&quot;, echo = TRUE)
+
+&gt; 5 + 5
+[1] 10
+
+&gt; 6 * 3
+[1] 18
+&gt;</code></pre>
+</div>
+<div id="section-section-28" class="section level3">
+<h3></h3>
+<p>Each line is echoed. Each line is executed. The results of each line,
+if there are any, are printed.</p>
+<p>The output you see is the same as what would happen if you copied
+each line to the Console and hit <code>Enter</code> after each one.</p>
+</div>
+<div id="section-exercise-6-1" class="section level3">
+<h3>Exercise 6</h3>
+<p>Instead of sourcing the entire file, we can just execute (or “run”) a
+single line. In <code>script-1.R</code>, place your cursor on the same
+line as <code>6 * 3</code> and click the “Run Selection in Console”
+option, the third choice in the Source button. CP/CR.</p>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="script-1-6" class="tutorial-question panel-body">
+<div id="script-1-6-answer_container" class="shiny-html-output"></div>
+<div id="script-1-6-message_container" class="shiny-html-output"></div>
+<div id="script-1-6-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+<p>You should get:</p>
+<pre><code>&gt; 6 * 3
+[1] 18
+&gt;</code></pre>
+</div>
+<div id="section-section-29" class="section level3">
+<h3></h3>
+<p>Instead of both lines in the script executing, only the second line
+does. And the process by which this happens has nothing to do with the
+entire script. <strong>Run is not the same thing as Source.</strong>
+With Run, you are just copy/pasting some of the lines from the script to
+the Console at a time. With Source, you’re copy/pasting <em>all</em>
+lines from the script.</p>
+</div>
+<div id="section-exercise-7-1" class="section level3">
+<h3>Exercise 7</h3>
+<p>The shortcut key for running a single line of code is
+<code>Cmd/Ctrl + Enter</code>. In your R script, place your cursor on
+the same line as <code>5 + 5</code> and hit
+<code>Cmd/Ctrl + Enter</code>. CP/CR.</p>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="script-1-7" class="tutorial-question panel-body">
+<div id="script-1-7-answer_container" class="shiny-html-output"></div>
+<div id="script-1-7-message_container" class="shiny-html-output"></div>
+<div id="script-1-7-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+</div>
+<div id="section-section-30" class="section level3">
+<h3></h3>
+<p>Only the first line of the script is executed.
+<code>Cmd/Ctrl + Enter</code> is probably the single most commonly used
+shortcut key because it is very handy to execute your code
+line-by-line.</p>
+<p><code>Cmd/Ctrl + Enter</code> is “smart” in two ways. First, if you
+highlight more than one line of code, and then place your cursor within
+the highlighted area, it will execute all the code in that area. Second,
+even if nothing is highlighted, if the line with the cursor is part of a
+block of code which extends over multiple lines — like creating a plot —
+it will execute all the code in that block.</p>
+</div>
+<div id="section-exercise-8" class="section level3">
+<h3>Exercise 8</h3>
+<p>Go back to the first line in your R script. Change <code>5 + 5</code>
+to <code>x &lt;- 5 + 5</code>, thereby creating an object named
+<code>x</code> with a value of 10. Save the file. Click the “Source R
+File with Echo” option. CP/CR.</p>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="script-1-8" class="tutorial-question panel-body">
+<div id="script-1-8-answer_container" class="shiny-html-output"></div>
+<div id="script-1-8-message_container" class="shiny-html-output"></div>
+<div id="script-1-8-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+<p>Your answer should look like:</p>
+<pre><code>&gt; source(&quot;~/Desktop/projects/analysis-1/script-1.R&quot;, echo=TRUE)
+
+&gt; x &lt;- 5 + 5
+
+&gt; 6 * 3
+[1] 18
+&gt; </code></pre>
+</div>
+<div id="section-section-31" class="section level3">
+<h3></h3>
+<p>Note how the <code>x &lt;- 5 + 5</code> is executed (and echoed) but
+nothing is printed. The assignment operator (<code>&lt;-</code>) does
+not generate a printed result.</p>
+</div>
+<div id="section-exercise-9" class="section level3">
+<h3>Exercise 9</h3>
+<p>In the Console tab, run <code>ls()</code>. CP/CR.</p>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="script-1-9" class="tutorial-question panel-body">
+<div id="script-1-9-answer_container" class="shiny-html-output"></div>
+<div id="script-1-9-message_container" class="shiny-html-output"></div>
+<div id="script-1-9-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+</div>
+<div id="section-section-32" class="section level3">
+<h3></h3>
+<p><code>ls()</code> returns a list of objects present in your
+environment. These are the same objects displayed under Variables in
+your Session tab in the Secondary Side Bar in Positron (on the right
+side).</p>
+<p><img src="images/source-x.png" width="90%" /></p>
+</div>
+</div>
+<div id="section-script-2" class="section level2">
+<h2>Script 2</h2>
+<div id="section-section-33" class="section level3">
+<h3></h3>
+<p>Let’s create this plot:</p>
+<p><img src="tutorial_files/figure-html/diamond-hist-1.png" width="90%" /></p>
+</div>
+<div id="section-exercise-1-3" class="section level3">
+<h3>Exercise 1</h3>
+<p>Click <code>File -&gt; New File ... -&gt; R File</code>. At the top
+of the Editor, the file should be called <code>Untitled-1</code> (or
+something similar).</p>
+</div>
+<div id="section-section-34" class="section level3">
+<h3></h3>
+<p>Click the “Save current document” icon – the disk image to the right
+of the Open dropdown menu. Or use the shortcut <code>Cmd/Ctrl + S</code>
+to save the script. Let’s call this file <code>script-2</code>. The
+<code>.R</code> suffix is added automatically.</p>
+<p>In the Console, run <code>list.files()</code>. CP/CR.</p>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="script-2-1" class="tutorial-question panel-body">
+<div id="script-2-1-answer_container" class="shiny-html-output"></div>
+<div id="script-2-1-message_container" class="shiny-html-output"></div>
+<div id="script-2-1-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+</div>
+<div id="section-section-35" class="section level3">
+<h3></h3>
+<p>Save your scripts (with informative names) in the project, edit them,
+run them line-by-line or in their entirety. Restart R frequently to make
+sure you’ve captured everything in your scripts.</p>
+<p>Scripts and projects give you a solid workflow that will serve you
+well in the future. Always remember to create one project for each data
+analysis project. That project may contain multiple scripts files, along
+with other material.</p>
+</div>
+<div id="section-exercise-2-3" class="section level3">
+<h3>Exercise 2</h3>
+<p>Restart your R session with <code>Cmd/Ctrl + Shift + 0</code>.
+(Again, we are assuming that you are doing this work in a different
+Positron window, not the same one as you are using for this
+tutorial.)</p>
+<p>From the Console, run <code>list.files()</code>. CP/CR.</p>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="script-2-2" class="tutorial-question panel-body">
+<div id="script-2-2-answer_container" class="shiny-html-output"></div>
+<div id="script-2-2-message_container" class="shiny-html-output"></div>
+<div id="script-2-2-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+</div>
+<div id="section-section-36" class="section level3">
+<h3></h3>
+<p>Your answer should look like:</p>
+<pre><code>R 4.4.2 exited (preparing for restart)
+R 4.4.2 restarted.
+&gt; list.files()
+[1] &quot;script-1.R&quot; &quot;script-2.R&quot;
+&gt;</code></pre>
+<p>The two files we had from before — <code>script-1.R</code>, and
+<code>script-2.R</code> — still exist. Our work, if we have saved it, is
+preserved even when R (or Positron) restarts.</p>
+</div>
+<div id="section-exercise-3-2" class="section level3">
+<h3>Exercise 3</h3>
+<p>From the Console, run <code>ls()</code>. CP/CR.</p>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="script-2-3" class="tutorial-question panel-body">
+<div id="script-2-3-answer_container" class="shiny-html-output"></div>
+<div id="script-2-3-message_container" class="shiny-html-output"></div>
+<div id="script-2-3-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+</div>
+<div id="section-section-37" class="section level3">
+<h3></h3>
+<p><code>x</code> is gone! The environment — the place in the computer
+where R creates and uses objects — is cleaned, by default, each time R
+restarts. This is a good thing! For our work to be “reproducible,” we
+want to be able to start from nothing except our code and raw data.</p>
+</div>
+<div id="section-exercise-4-2" class="section level3">
+<h3>Exercise 4</h3>
+<p>At the top of <code>script-2.R</code>, type</p>
+<pre><code>library(tidyverse)</code></pre>
+<p>You will see, in the top bar of the Editor, that
+<code>script-2.R</code>, the name of the file, has a black dot next to
+it. This indicates that there are unsaved changes in the file.</p>
+</div>
+<div id="section-section-38" class="section level3">
+<h3></h3>
+<p>Run the entire file with <code>Ctrl + Shift + Enter</code>. Note how
+much material — the “Attaching core tidyverse packages” and so on — is
+produced because we are sourcing the file with
+<code>echo=TRUE</code>.</p>
+</div>
+<div id="section-section-39" class="section level3">
+<h3></h3>
+<p>Run <code>search()</code> in the Console. CP/CR.</p>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="script-2-4" class="tutorial-question panel-body">
+<div id="script-2-4-answer_container" class="shiny-html-output"></div>
+<div id="script-2-4-message_container" class="shiny-html-output"></div>
+<div id="script-2-4-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+</div>
+<div id="section-section-40" class="section level3">
+<h3></h3>
+<p>This function returns a list of loaded packages. This should include
+the string <code>package:tidyverse</code>.</p>
+</div>
+<div id="section-exercise-5-2" class="section level3">
+<h3>Exercise 5</h3>
+<p>Skip a line and add the following comment to the file:</p>
+<pre><code># This is an example of a code comment within an R script.</code></pre>
+<p>Save the file.</p>
+<p>In the Console, run:</p>
+<pre><code>tutorial.helpers::show_file(&quot;script-2.R&quot;)</code></pre>
+<p>CP/CR.</p>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="script-2-5" class="tutorial-question panel-body">
+<div id="script-2-5-answer_container" class="shiny-html-output"></div>
+<div id="script-2-5-message_container" class="shiny-html-output"></div>
+<div id="script-2-5-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+</div>
+<div id="section-section-41" class="section level3">
+<h3></h3>
+<p>Did you remember to have a blank line at the end of the file? If not,
+you got a warning. Always have a blank line at the end of any text
+file.</p>
+</div>
+<div id="section-section-42" class="section level3">
+<h3></h3>
+<p>Comments begin with a hash (also known as a “pound sign”):
+<code>#</code>. R will ignore everything on the line to the right of the
+hash when trying to run the code.</p>
+<p>Comments are an extremely useful tool when writing code. If they’re
+placed well, it becomes much easier to <em>debug</em> (find and fix
+mistakes) if something goes wrong.</p>
+<p>There are a few “guidelines” to writing comments, for example:</p>
+<ul>
+<li>Comments should be used sparingly.</li>
+<li>Comments are unnecessary and in fact distracting if they state the
+obvious.</li>
+<li>Comments that contradict the code are worse than no comments. Always
+make a priority of keeping the comments up-to-date when the code
+changes!</li>
+</ul>
+<p>Typically, when reading code, you should be able to answer 3
+questions fairly easily, for every line:</p>
+<ul>
+<li><strong>What</strong> is this code doing,</li>
+<li><strong>How</strong> is it doing it, and</li>
+<li><strong>Why</strong> is it being done.</li>
+</ul>
+<p>The <strong>what</strong> and <strong>how</strong> can be deduced
+from the code itself. The <strong>why</strong>, though, is a bit
+trickier, and it is highly recommended that you use comments to make it
+easier to tell <strong>why</strong> something is being done.</p>
+<pre class="r"><code># This is an example of a poor comment:
+...
+x &lt;- x + 1    # Increment x
+...
+
+# This is an example of a good comment:
+...
+x &lt;- x + 1    # Account for borders
+...</code></pre>
+</div>
+<div id="section-exercise-6-2" class="section level3">
+<h3>Exercise 6</h3>
+<p>Change the code comment in <code>script-2.R</code> from “This is an
+example of a code comment within an R script.” to a one sentence
+description of one of your recent meals. Save the file.</p>
+<p>In the Console, run:</p>
+<pre><code>tutorial.helpers::show_file(&quot;script-2.R&quot;)</code></pre>
+<p>CP/CR.</p>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="script-2-6" class="tutorial-question panel-body">
+<div id="script-2-6-answer_container" class="shiny-html-output"></div>
+<div id="script-2-6-message_container" class="shiny-html-output"></div>
+<div id="script-2-6-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+</div>
+<div id="section-section-43" class="section level3">
+<h3></h3>
+<p>Get in the habit of adding comments.</p>
+<p>Figuring out <em>why</em> something was done is much more difficult
+than understanding <em>how</em> it was done. For example,
+<code>geom_smooth()</code> has an argument called <code>span</code>,
+which controls the smoothness of the curve, with larger values yielding
+a smoother curve. Suppose you decide to change the value of
+<code>span</code> from its default of 0.75 to 0.9: it’s easy for a
+future reader to understand what is happening, but unless you note your
+thinking in a comment, no one will understand <em>why</em> you changed
+the default.</p>
+</div>
+<div id="section-exercise-7-2" class="section level3">
+<h3>Exercise 7</h3>
+<p>Skip a line after your comment. Call <code>ggplot()</code>, setting
+<code>data</code> to <code>diamonds</code> and mapping <code>x</code> to
+<code>carat</code> within <code>aes()</code>.</p>
+<p>Run the entire file again. Note the sloppiness of the word “run” in
+this instruction. It is not always clear what “run” means. For example,
+it does <em>not</em> mean to click the “Run” button! In general, “run”
+means to “execute” all the code in the file, most commonly by either
+using <code>Ctrl + Shift + Enter</code> or by pressing the “Source”
+button.</p>
+</div>
+<div id="section-section-44" class="section level3">
+<h3></h3>
+<p>This should generate a blank plot in the Plots tab in buttom of the
+Secondary Side Bar.</p>
+</div>
+<div id="section-section-45" class="section level3">
+<h3></h3>
+<p>In the Console, run:</p>
+<pre><code>tutorial.helpers::show_file(&quot;script-2.R&quot;)</code></pre>
+<p>CP/CR.</p>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="script-2-7" class="tutorial-question panel-body">
+<div id="script-2-7-answer_container" class="shiny-html-output"></div>
+<div id="script-2-7-message_container" class="shiny-html-output"></div>
+<div id="script-2-7-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+</div>
+<div id="section-section-46" class="section level3">
+<h3></h3>
+<p><code>ggplot()</code> will generate a blank plot, at least until a
+<code>geom</code> layer is added.</p>
+</div>
+<div id="section-exercise-8-1" class="section level3">
+<h3>Exercise 8</h3>
+<p>Add a layer with <code>geom_histogram()</code>. Change the border
+color in our graph by setting <code>color</code> to <code>"white"</code>
+within <code>geom_histogram</code>, and change the number of columns in
+our plot by setting the <code>bins</code> argument to <code>100</code>.
+Remember that, to connect the <code>ggplot()</code> call to
+<code>geom_histogram()</code>, we need a <code>+</code>.</p>
+<p>Run the file. Again, to “run” a script generally means to “execute”
+it, meaning sending it to the R process. We have learned two ways to
+(easily) execute an entire file: pressing the “Source” button or hitting
+the associated shortcut key: <code>Ctrl + Shift + Enter</code>.</p>
+</div>
+<div id="section-section-47" class="section level3">
+<h3></h3>
+<p>This should generate bars on your plot. Did you remember to place a
+<code>+</code> after the <code>ggplot()</code> call and before the
+<code>geom_histogram()</code> layer?</p>
+</div>
+<div id="section-section-48" class="section level3">
+<h3></h3>
+<p>In the Console, run:</p>
+<pre><code>tutorial.helpers::show_file(&quot;script-2.R&quot;)</code></pre>
+<p>CP/CR.</p>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="script-2-8" class="tutorial-question panel-body">
+<div id="script-2-8-answer_container" class="shiny-html-output"></div>
+<div id="script-2-8-message_container" class="shiny-html-output"></div>
+<div id="script-2-8-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+</div>
+<div id="section-section-49" class="section level3">
+<h3></h3>
+<p>The <code>color</code> argument used here modifies the
+<em>border</em> color of our columns. To change the <em>fill</em> color,
+use the <code>fill</code> argument.</p>
+</div>
+<div id="section-exercise-9-1" class="section level3">
+<h3>Exercise 9</h3>
+<p>It would be nice if the numbers on the Y-axis were formatted better,
+i.e., with commas. The easiest way to do that is to add this line to the
+script.</p>
+<pre><code>scale_y_continuous(labels = scales::comma_format())</code></pre>
+<p>Do so. Run the file. Note that you don’t need to save the file first.
+If you execute a file with either “Source” or
+<code>Ctrl + Shift + Enter</code>, RStudio will save the file
+automatically.</p>
+<p>Don’t forget that you will need a <code>+</code> after the call to
+<code>geom_histogram()</code>.</p>
+<p>In the Console, run:</p>
+<pre><code>tutorial.helpers::show_file(&quot;script-2.R&quot;)</code></pre>
+<p>CP/CR.</p>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="script-2-9" class="tutorial-question panel-body">
+<div id="script-2-9-answer_container" class="shiny-html-output"></div>
+<div id="script-2-9-message_container" class="shiny-html-output"></div>
+<div id="script-2-9-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+</div>
+<div id="section-section-50" class="section level3">
+<h3></h3>
+<p>We use <code>scale_y_continuous()</code> (and
+<code>scale_x_continuous()</code>) to modify the labels and the breaks
+in numeric axes. The <strong>scales</strong> package provides a variety
+of useful formatting tools, including <code>comma_format()</code>,
+<code>dollar_format()</code> and others.</p>
+</div>
+<div id="section-exercise-10" class="section level3">
+<h3>Exercise 10</h3>
+<p>Now let’s make our graph look a little nicer by adding a
+<code>labs()</code> layer with an appropriate title, subtitle, and axis
+labels.</p>
+<p>Reminder, this is what our graph should look like</p>
+<p><img src="tutorial_files/figure-html/unnamed-chunk-10-1.png" width="90%" /></p>
+<p>Run your R script to see your completed plot. Again, note the wording
+here! In casual language, we use the word “run” to generically mean
+“Tell the computer to execute the commands in this file.” We don’t
+necessarily care how that is achieved.</p>
+</div>
+<div id="section-section-51" class="section level3">
+<h3></h3>
+<p>In the Console, run:</p>
+<pre><code>tutorial.helpers::show_file(&quot;script-2.R&quot;)</code></pre>
+<p>CP/CR.</p>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="script-2-10" class="tutorial-question panel-body">
+<div id="script-2-10-answer_container" class="shiny-html-output"></div>
+<div id="script-2-10-message_container" class="shiny-html-output"></div>
+<div id="script-2-10-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+</div>
+<div id="section-section-52" class="section level3">
+<h3></h3>
+<p>Good coding style is like correct punctuation: you can manage without
+it, butitsuremakesthingseasiertoread. Even as a very new programmer,
+it’s a good idea to work on your code style. Using a consistent style
+makes it easier for others (including future-you!) to read your work and
+is particularly important if you need to get help from someone else.</p>
+<p>Note the nice formatting. After the <code>ggplot()</code> call, the
+next two commands — <code>geom_histogram()</code> and
+<code>labs()</code> — are both indented the same amount. Similarly,
+arguments to a given function — like <code>bins</code> and
+<code>color</code> — are lined up with each other.</p>
+</div>
+<div id="section-exercise-11" class="section level3">
+<h3>Exercise 11</h3>
+<p>Now we have the code which creates a plot in <code>script-2.R</code>.
+How do we use this plot for other things? Right now we have to run
+<code>script-2.R</code> every time we want to see the plot, which is a
+little inconvenient.</p>
+</div>
+<div id="section-section-53" class="section level3">
+<h3></h3>
+<p>We can use the <code>ggsave()</code> function. Type
+<code>?ggsave</code> in the R Console. This will open the help page for
+<code>ggsave()</code>. Copy and paste the Description from the help page
+into the space below.</p>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="script-2-11" class="tutorial-question panel-body">
+<div id="script-2-11-answer_container" class="shiny-html-output"></div>
+<div id="script-2-11-message_container" class="shiny-html-output"></div>
+<div id="script-2-11-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+<p><code>ggsave()</code> is used to save plots as individual files,
+separate from the code which created the plot. In this case we will be
+using the “png” format.</p>
+</div>
+<div id="section-exercise-12" class="section level3">
+<h3>Exercise 12</h3>
+<p>We want to save our entire graph to an object, which can be done by
+setting our plot equal to a variable. Call this variable
+<code>hist_p</code>.</p>
+<p>Now using the <code>ggsave()</code> function we can create a png of
+our plot from our code. In <code>ggsave()</code>, set <code>plot</code>
+to <code>hist_p</code>, <code>file</code> to
+<code>"diamonds.png"</code>.</p>
+<p>Your entire file should look like:</p>
+<pre><code>library(tidyverse)
+
+# Had an OK filet mignon at Cheesecake Factory.
+hist_p &lt;- ggplot(data = diamonds,
+                 mapping = aes(x = carat)) +
+  geom_histogram(bins = 100,
+                 color = &quot;white&quot;) +
+  scale_y_continuous(labels = scales::comma_format()) +                
+  labs(title = &quot;Histogram of Carat (Weight) among 50,000 Diamonds&quot;,
+       subtitle = &quot;Carats just at or above meaningful numbers are very common&quot;,
+       x = &quot;Carat&quot;,
+       y = &quot;Count&quot;,
+       caption = &quot;diamonds data set from ggplot2 package&quot;)
+
+ggsave(plot = hist_p, file = &quot;diamonds.png&quot;)</code></pre>
+<p>Run your code. CP/CR.</p>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="script-2-13-ex" class="tutorial-question panel-body">
+<div id="script-2-13-ex-answer_container" class="shiny-html-output"></div>
+<div id="script-2-13-ex-message_container" class="shiny-html-output"></div>
+<div id="script-2-13-ex-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+<p>Your answer should look something like:</p>
+<pre><code>&gt; source(&quot;/Users/dkane/Desktop/projects/analysis-1/script-2.R&quot;, echo = TRUE)
+
+&gt; library(tidyverse)
+
+&gt; # Had an OK filet mignon at Cheesecake Factory.
+&gt; 
+&gt; hist_p &lt;- ggplot(data = diamonds,
++                  mapping = aes(x = carat)) +
++   geom_histo .... [TRUNCATED] 
+
+&gt; ggsave(plot = hist_p, file = &quot;diamonds.png&quot;)
+Saving 3.33 x 3.33 in image
+&gt;</code></pre>
+<p>You are witnessing a conversation between your script and R. Your
+script tells R to do this, then do that, and then do this other thing. R
+does those things, occasionally providing a response or update.</p>
+</div>
+<div id="section-exercise-13" class="section level3">
+<h3>Exercise 13</h3>
+<p>In the Console, run <code>list.files()</code>. CP/CR.</p>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="script-2-12" class="tutorial-question panel-body">
+<div id="script-2-12-answer_container" class="shiny-html-output"></div>
+<div id="script-2-12-message_container" class="shiny-html-output"></div>
+<div id="script-2-12-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+</div>
+<div id="section-section-54" class="section level3">
+<h3></h3>
+<p>You should see the <code>diamonds.png</code> file which contains your
+plot. Click on the Explorer button on the Activity Bar on the left in
+order to see all the files in the <code>analysis-1</code> directory.
+Click on the <code>diamonds.png</code> file to open your plot in the
+Editor.</p>
+<p>If the title text flows out of the image, you might want to modify
+the <code>scale</code> argument in <code>ggsave()</code> to find a
+better image size. <code>scale</code> is set to 1 by default.</p>
+</div>
+</div>
+<div id="section-script-3" class="section level2">
+<h2>Script 3</h2>
+<div id="section-section-55" class="section level3">
+<h3></h3>
+<p>Let’s make another plot, this time in a script inside of a
+<em>different</em> project. We’ll be making this plot:</p>
+<p><img src="tutorial_files/figure-html/script-3-0-1.png" width="90%" /></p>
+</div>
+<div id="section-exercise-1-4" class="section level3">
+<h3>Exercise 1</h3>
+<p>Type <code>getwd()</code> into the Console. CP/CR.</p>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="script-3-1" class="tutorial-question panel-body">
+<div id="script-3-1-answer_container" class="shiny-html-output"></div>
+<div id="script-3-1-message_container" class="shiny-html-output"></div>
+<div id="script-3-1-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+</div>
+<div id="section-section-56" class="section level3">
+<h3></h3>
+<p>Your answer should look like this:</p>
+<pre><code>&quot;/Users/dkane/Desktop/projects/analysis-1&quot;</code></pre>
+<p>Somewhere in the path should be <code>analysis-1</code>, the name of
+the project you’re in right now.</p>
+</div>
+<div id="section-exercise-2-4" class="section level3">
+<h3>Exercise 2</h3>
+<p>Type <code>list.files()</code> into the Console. CP/CR.</p>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="script-3-2" class="tutorial-question panel-body">
+<div id="script-3-2-answer_container" class="shiny-html-output"></div>
+<div id="script-3-2-message_container" class="shiny-html-output"></div>
+<div id="script-3-2-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+</div>
+<div id="section-section-57" class="section level3">
+<h3></h3>
+<p>This command shows the files in the directory.</p>
+<p>Note that “project” has multiple meanings. First, “project” is a
+generic term for an a project which contains our code/data, generally
+with a sensible name. Second, <code>analysis-1</code>, note the use of
+typewriter font, is the name of a specific project. Third,
+<code>analysis-1</code> — the same string in the same font — can refer
+to the directory in which the project is located.</p>
+<p>For the most part, the names of projects and the directories in which
+they reside are used interchangeably.</p>
+</div>
+<div id="section-exercise-3-3" class="section level3">
+<h3>Exercise 3</h3>
+<p>From the Positron menu, select
+<code>File -&gt; New Project ...</code>. (Again, all of this occurs in
+the Positron window in which you are <strong>not</strong> running this
+tutorial.) Select “R Project” and click “Next.”</p>
+<p>Use <code>analysis-2</code> for the “Project Name.” Ensure that
+“Parent Directory” is set to the location of your <code>projects</code>
+directory. Click “Next” and then “Create.”</p>
+<p>Choose “Current Window,” rather than “New Window” as we did before,
+since we no longer need to see the <code>analysis-1</code> project.</p>
+</div>
+<div id="section-section-58" class="section level3">
+<h3></h3>
+<p>Type <code>getwd()</code> into the Console. CP/CR.</p>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="script-3-3" class="tutorial-question panel-body">
+<div id="script-3-3-answer_container" class="shiny-html-output"></div>
+<div id="script-3-3-message_container" class="shiny-html-output"></div>
+<div id="script-3-3-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+</div>
+<div id="section-section-59" class="section level3">
+<h3></h3>
+<p>Your answer should look like this:</p>
+<pre><code>&quot;/Users/dkane/Desktop/projects/analysis-2&quot;</code></pre>
+<p>Somewhere in the path should be <code>analysis-2</code>, the name of
+the project you just made and are now in.</p>
+</div>
+<div id="section-exercise-4-3" class="section level3">
+<h3>Exercise 4</h3>
+<p>Now, we have to create the script where we’ll be creating our
+plot.</p>
+<p>In the menu bar on the top of the window, press
+<code>File -&gt; New File -&gt; R Script</code>. Type <code>5 * 5</code>
+and a newline into the file and hit <code>Ctrl/Cmd + S</code> to save
+it. Save it as <code>script-3.R</code> (the <code>.R</code> is
+automatically supplied by the dialog box when you save, so you only need
+to type <code>script-3</code>).</p>
+<p>In the console, run <code>list.files()</code>. CP/CR.</p>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="script-3-4" class="tutorial-question panel-body">
+<div id="script-3-4-answer_container" class="shiny-html-output"></div>
+<div id="script-3-4-message_container" class="shiny-html-output"></div>
+<div id="script-3-4-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+</div>
+<div id="section-section-60" class="section level3">
+<h3></h3>
+<p>You should see <code>script-3.R</code> somewhere in the output.</p>
+</div>
+<div id="section-exercise-5-3" class="section level3">
+<h3>Exercise 5</h3>
+<p>Go back to editing <code>script-3.R</code>. Get rid of everything
+that’s already there. Copy-paste the below code into the script, and
+save with <code>Ctrl/Cmd + S</code>.</p>
+<pre><code>library(tidyverse)
+
+car_plot &lt;- ggplot(mpg, aes(displ, hwy, colour = class)) + 
+  geom_point()
+
+car_plot</code></pre>
+<p>Don’t forget to have an empty line at the end of the file!</p>
+<p>Once you’re done, source the script with the “Source” button in the
+top right.</p>
+</div>
+<div id="section-section-61" class="section level3">
+<h3></h3>
+<p>Back in the Console, run
+<code>tutorial.helpers::show_file('script-3.r')</code>. CP/CR.</p>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="script-3-5" class="tutorial-question panel-body">
+<div id="script-3-5-answer_container" class="shiny-html-output"></div>
+<div id="script-3-5-message_container" class="shiny-html-output"></div>
+<div id="script-3-5-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+<p>The output should have the same chunk of code as the one you were
+given to copy-paste above.</p>
+<!-- DK: Ends sort of quickly and is somewhat sloppy. -->
+</div>
+</div>
+<div id="section-summary" class="section level2">
+<h2>Summary</h2>
+<div id="section-section-62" class="section level3">
+<h3></h3>
+<p>This tutorial covered <a
+href="https://r4ds.hadley.nz/workflow-basics.html">Chapter 2 Workflow:
+basics</a>, <a href="https://r4ds.hadley.nz/workflow-style.html">Chapter
+4 Workflow: code style</a>, <a
+href="https://r4ds.hadley.nz/workflow-scripts.html">Chapter 6 Workflow:
+scripts and projects</a>, and some material in <a
+href="https://r4ds.hadley.nz/quarto.html">Chapter 28 Quarto</a> from <a
+href="https://r4ds.hadley.nz/"><em>R for Data Science (2e)</em></a> by
+Hadley Wickham, Mine Çetinkaya-Rundel, and Garrett Grolemund. You
+learned how to use <a
+href="https://r4ds.hadley.nz/workflow-scripts.html#scripts">R
+scripts</a> and how to create <a
+href="https://docs.posit.co/ide/user/ide/guide/code/projects.html">projects</a>.</p>
+</div>
+</div>
+<div id="section-download-answers" class="section level2">
+<h2>Download answers</h2>
+<div class="panel panel-default tutorial-question-container">
+<div data-label="minutes" class="tutorial-question panel-body">
+<div id="minutes-answer_container" class="shiny-html-output"></div>
+<div id="minutes-message_container" class="shiny-html-output"></div>
+<div id="minutes-action_button_container" class="shiny-html-output"></div>
+<script>if (Tutorial.triggerMathJax) Tutorial.triggerMathJax()</script>
+</div>
+</div>
+<div id="section-section-63" class="section level3">
+<h3></h3>
+<div>
+When you have completed this tutorial, follow these steps:
+<br/>
+<ol>
+<li>Click the button to download a file containing your answers.</li>
+<li>Save the file onto your computer in a convenient location.</li>
+</ol>
+<div class="container-fluid">
+<div class="col-sm-8" role="main">
+<div id="form">
+<a id="downloadHtml" class="btn btn-default shiny-download-link disabled" href="" target="_blank" download aria-disabled="true" tabindex="-1">
+<i class="fas fa-download" role="presentation" aria-label="download icon"></i>
+Download HTML
+</a>
+</div>
+</div>
+</div>
+<div>
+<br/>
+(If no file seems to download, try clicking with the alternative button on the download button and choose "Save link as...")
+<br/>
+</div>
+</div>
+<p>
+<script type="application/shiny-prerendered" data-context="server-start">
+library(learnr)
+library(tutorial.helpers)
+library(tidyverse)
+library(knitr)
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(out.width = '90%')
+options(tutorial.exercise.timelimit = 60, 
+        tutorial.storage = "local")
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::register_http_handlers(session, metadata = list(id = "positron-and-code"))
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::prepare_tutorial_state(session)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::i18n_observe_tutorial_language(input, session)
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+session$onSessionEnded(function() {
+        learnr:::event_trigger(session, "session_stop")
+      })
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+
+observeEvent(input$js_to_server, {
+  ex_next = input$js_to_server
+  ex_next_label_data = strsplit(ex_next, "-")[[1]]
+  ex_next_num = tail(ex_next_label_data, n = 1)
+  str_head = ex_next_label_data |>
+    head(n = length(ex_next_label_data) - 1) |>
+    paste0(collapse = "-")
+  str_num = as.integer(gsub("[^0-9]", "", ex_next_num)) - 1
+  ex_prev = paste0(str_head, "-", str_num)
+  code <- learnr::get_tutorial_state(ex_prev, session)$answer |> 
+    trimws()
+  session$sendCustomMessage("set-exercise-code", list(label = ex_next, code = code))
+})
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_text", label = "name", question = structure("Name:", html = TRUE, class = c("html", 
+"character")), answers = list(structure(list(id = "lnr_ans_9a50939", 
+    option = character(0), value = NULL, label = NULL, correct = TRUE, 
+    message = NULL, type = "literal"), class = c("tutorial_question_answer", 
+"tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+"character")), try_again = structure("<span data-i18n=\"button.questiontryagain\">Try Again<\u002fspan>", html = TRUE, class = c("html", 
+"character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+"character")), try_again = NULL, incorrect = NULL, message = NULL, 
+    post_message = NULL), ids = list(answer = "name-answer", 
+    question = "name"), loading = NULL, random_answer_order = FALSE, 
+    allow_retry = TRUE, seed = 92620253.4568703, options = list(
+        placeholder = "Enter answer here...", trim = TRUE)), class = c("learnr_text", 
+"tutorial_question")), session = session)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_text", label = "email", question = structure("Email:", html = TRUE, class = c("html", 
+"character")), answers = list(structure(list(id = "lnr_ans_597c792", 
+    option = character(0), value = NULL, label = NULL, correct = TRUE, 
+    message = NULL, type = "literal"), class = c("tutorial_question_answer", 
+"tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+"character")), try_again = structure("<span data-i18n=\"button.questiontryagain\">Try Again<\u002fspan>", html = TRUE, class = c("html", 
+"character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+"character")), try_again = NULL, incorrect = NULL, message = NULL, 
+    post_message = NULL), ids = list(answer = "email-answer", 
+    question = "email"), loading = NULL, random_answer_order = FALSE, 
+    allow_retry = TRUE, seed = 1760658464.18013, options = list(
+        placeholder = "Enter answer here...", trim = TRUE)), class = c("learnr_text", 
+"tutorial_question")), session = session)
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_text", label = "ID", question = structure("ID (if requested by your instructor):", html = TRUE, class = c("html", 
+"character")), answers = list(structure(list(id = "lnr_ans_15629d7", 
+    option = character(0), value = NULL, label = NULL, correct = TRUE, 
+    message = NULL, type = "literal"), class = c("tutorial_question_answer", 
+"tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+"character")), try_again = structure("<span data-i18n=\"button.questiontryagain\">Try Again<\u002fspan>", html = TRUE, class = c("html", 
+"character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+"character")), try_again = NULL, incorrect = NULL, message = NULL, 
+    post_message = NULL), ids = list(answer = "ID-answer", question = "ID"), 
+    loading = NULL, random_answer_order = FALSE, allow_retry = TRUE, 
+    seed = 1078605389.99774, options = list(placeholder = "Enter answer here...", 
+        trim = TRUE)), class = c("learnr_text", "tutorial_question"
+)), session = session)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_text", label = "checking-your-setup-1", 
+    question = NULL, answers = list(structure(list(id = "lnr_ans_f204f3f", 
+        option = character(0), value = NULL, label = NULL, correct = TRUE, 
+        message = NULL, type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Edit Answer", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+    "character")), try_again = NULL, incorrect = NULL, message = NULL, 
+        post_message = NULL), ids = list(answer = "checking-your-setup-1-answer", 
+        question = "checking-your-setup-1"), loading = NULL, 
+    random_answer_order = FALSE, allow_retry = TRUE, seed = 810672451.622501, 
+    options = list(placeholder = "Enter answer here...", trim = TRUE, 
+        rows = 3)), class = c("learnr_text", "tutorial_question"
+)), session = session)
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_text", label = "checking-your-setup-2", 
+    question = NULL, answers = list(structure(list(id = "lnr_ans_c3bbc0b", 
+        option = character(0), value = NULL, label = NULL, correct = TRUE, 
+        message = NULL, type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Edit Answer", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+    "character")), try_again = NULL, incorrect = NULL, message = NULL, 
+        post_message = NULL), ids = list(answer = "checking-your-setup-2-answer", 
+        question = "checking-your-setup-2"), loading = NULL, 
+    random_answer_order = FALSE, allow_retry = TRUE, seed = 1588709464.2602, 
+    options = list(placeholder = "Enter answer here...", trim = TRUE, 
+        rows = 3)), class = c("learnr_text", "tutorial_question"
+)), session = session)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_text", label = "checking-your-setup-3", 
+    question = NULL, answers = list(structure(list(id = "lnr_ans_69fcfa", 
+        option = character(0), value = NULL, label = NULL, correct = TRUE, 
+        message = NULL, type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Edit Answer", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+    "character")), try_again = NULL, incorrect = NULL, message = NULL, 
+        post_message = NULL), ids = list(answer = "checking-your-setup-3-answer", 
+        question = "checking-your-setup-3"), loading = NULL, 
+    random_answer_order = FALSE, allow_retry = TRUE, seed = 1593873667.75779, 
+    options = list(placeholder = "Enter answer here...", trim = TRUE, 
+        rows = 3)), class = c("learnr_text", "tutorial_question"
+)), session = session)
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_text", label = "checking-your-setup-4", 
+    question = NULL, answers = list(structure(list(id = "lnr_ans_a346ebb", 
+        option = character(0), value = NULL, label = NULL, correct = TRUE, 
+        message = NULL, type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Edit Answer", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+    "character")), try_again = NULL, incorrect = NULL, message = NULL, 
+        post_message = NULL), ids = list(answer = "checking-your-setup-4-answer", 
+        question = "checking-your-setup-4"), loading = NULL, 
+    random_answer_order = FALSE, allow_retry = TRUE, seed = 1527396612.78875, 
+    options = list(placeholder = "Enter answer here...", trim = TRUE, 
+        rows = 3)), class = c("learnr_text", "tutorial_question"
+)), session = session)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_text", label = "checking-your-setup-5", 
+    question = NULL, answers = list(structure(list(id = "lnr_ans_fa6fa88", 
+        option = character(0), value = NULL, label = NULL, correct = TRUE, 
+        message = NULL, type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Edit Answer", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+    "character")), try_again = NULL, incorrect = NULL, message = NULL, 
+        post_message = NULL), ids = list(answer = "checking-your-setup-5-answer", 
+        question = "checking-your-setup-5"), loading = NULL, 
+    random_answer_order = FALSE, allow_retry = TRUE, seed = 1683884908.21588, 
+    options = list(placeholder = "Enter answer here...", trim = TRUE, 
+        rows = 3)), class = c("learnr_text", "tutorial_question"
+)), session = session)
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_text", label = "checking-your-setup-6", 
+    question = NULL, answers = list(structure(list(id = "lnr_ans_4f37dec", 
+        option = character(0), value = NULL, label = NULL, correct = TRUE, 
+        message = NULL, type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Edit Answer", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+    "character")), try_again = NULL, incorrect = NULL, message = NULL, 
+        post_message = NULL), ids = list(answer = "checking-your-setup-6-answer", 
+        question = "checking-your-setup-6"), loading = NULL, 
+    random_answer_order = FALSE, allow_retry = TRUE, seed = 727950767.161021, 
+    options = list(placeholder = "Enter answer here...", trim = TRUE, 
+        rows = 3)), class = c("learnr_text", "tutorial_question"
+)), session = session)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_text", label = "checking-your-setup-7", 
+    question = NULL, answers = list(structure(list(id = "lnr_ans_69d79af", 
+        option = character(0), value = NULL, label = NULL, correct = TRUE, 
+        message = NULL, type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Edit Answer", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+    "character")), try_again = NULL, incorrect = NULL, message = NULL, 
+        post_message = NULL), ids = list(answer = "checking-your-setup-7-answer", 
+        question = "checking-your-setup-7"), loading = NULL, 
+    random_answer_order = FALSE, allow_retry = TRUE, seed = 2143278170.00196, 
+    options = list(placeholder = "Enter answer here...", trim = TRUE, 
+        rows = 3)), class = c("learnr_text", "tutorial_question"
+)), session = session)
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_text", label = "projects-1", question = NULL, 
+    answers = list(structure(list(id = "lnr_ans_e08826", option = character(0), 
+        value = NULL, label = NULL, correct = TRUE, message = NULL, 
+        type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Edit Answer", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+    "character")), try_again = NULL, incorrect = NULL, message = NULL, 
+        post_message = NULL), ids = list(answer = "projects-1-answer", 
+        question = "projects-1"), loading = NULL, random_answer_order = FALSE, 
+    allow_retry = TRUE, seed = 410896565.808661, options = list(
+        placeholder = "Enter answer here...", trim = TRUE, rows = 3)), class = c("learnr_text", 
+"tutorial_question")), session = session)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_text", label = "projects-2", question = NULL, 
+    answers = list(structure(list(id = "lnr_ans_fc1ce9", option = character(0), 
+        value = NULL, label = NULL, correct = TRUE, message = NULL, 
+        type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Edit Answer", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+    "character")), try_again = NULL, incorrect = NULL, message = NULL, 
+        post_message = NULL), ids = list(answer = "projects-2-answer", 
+        question = "projects-2"), loading = NULL, random_answer_order = FALSE, 
+    allow_retry = TRUE, seed = 2107691932.51853, options = list(
+        placeholder = "Enter answer here...", trim = TRUE, rows = 3)), class = c("learnr_text", 
+"tutorial_question")), session = session)
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_text", label = "script-1-1", question = NULL, 
+    answers = list(structure(list(id = "lnr_ans_ced0ce0", option = character(0), 
+        value = NULL, label = NULL, correct = TRUE, message = NULL, 
+        type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Edit Answer", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+    "character")), try_again = NULL, incorrect = NULL, message = NULL, 
+        post_message = NULL), ids = list(answer = "script-1-1-answer", 
+        question = "script-1-1"), loading = NULL, random_answer_order = FALSE, 
+    allow_retry = TRUE, seed = 2143522376.00184, options = list(
+        placeholder = "Enter answer here...", trim = TRUE, rows = 3)), class = c("learnr_text", 
+"tutorial_question")), session = session)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_text", label = "script-1-2", question = NULL, 
+    answers = list(structure(list(id = "lnr_ans_3a27bad", option = character(0), 
+        value = NULL, label = NULL, correct = TRUE, message = NULL, 
+        type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Edit Answer", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+    "character")), try_again = NULL, incorrect = NULL, message = NULL, 
+        post_message = NULL), ids = list(answer = "script-1-2-answer", 
+        question = "script-1-2"), loading = NULL, random_answer_order = FALSE, 
+    allow_retry = TRUE, seed = 257700759.379999, options = list(
+        placeholder = "Enter answer here...", trim = TRUE, rows = 2)), class = c("learnr_text", 
+"tutorial_question")), session = session)
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_text", label = "script-1-3", question = NULL, 
+    answers = list(structure(list(id = "lnr_ans_e0e513", option = character(0), 
+        value = NULL, label = NULL, correct = TRUE, message = NULL, 
+        type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Edit Answer", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+    "character")), try_again = NULL, incorrect = NULL, message = NULL, 
+        post_message = NULL), ids = list(answer = "script-1-3-answer", 
+        question = "script-1-3"), loading = NULL, random_answer_order = FALSE, 
+    allow_retry = TRUE, seed = 1539902969.78293, options = list(
+        placeholder = "Enter answer here...", trim = TRUE, rows = 3)), class = c("learnr_text", 
+"tutorial_question")), session = session)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_text", label = "script-1-4", question = NULL, 
+    answers = list(structure(list(id = "lnr_ans_7c4a2e8", option = character(0), 
+        value = NULL, label = NULL, correct = TRUE, message = NULL, 
+        type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Edit Answer", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+    "character")), try_again = NULL, incorrect = NULL, message = NULL, 
+        post_message = NULL), ids = list(answer = "script-1-4-answer", 
+        question = "script-1-4"), loading = NULL, random_answer_order = FALSE, 
+    allow_retry = TRUE, seed = 1709783935.20382, options = list(
+        placeholder = "Enter answer here...", trim = TRUE, rows = 2)), class = c("learnr_text", 
+"tutorial_question")), session = session)
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_text", label = "script-1-5", question = NULL, 
+    answers = list(structure(list(id = "lnr_ans_7ac8055", option = character(0), 
+        value = NULL, label = NULL, correct = TRUE, message = NULL, 
+        type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Edit Answer", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+    "character")), try_again = NULL, incorrect = NULL, message = NULL, 
+        post_message = NULL), ids = list(answer = "script-1-5-answer", 
+        question = "script-1-5"), loading = NULL, random_answer_order = FALSE, 
+    allow_retry = TRUE, seed = 44181932.9794262, options = list(
+        placeholder = "Enter answer here...", trim = TRUE, rows = 2)), class = c("learnr_text", 
+"tutorial_question")), session = session)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_text", label = "script-1-6", question = NULL, 
+    answers = list(structure(list(id = "lnr_ans_2fc6d4f", option = character(0), 
+        value = NULL, label = NULL, correct = TRUE, message = NULL, 
+        type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Edit Answer", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+    "character")), try_again = NULL, incorrect = NULL, message = NULL, 
+        post_message = NULL), ids = list(answer = "script-1-6-answer", 
+        question = "script-1-6"), loading = NULL, random_answer_order = FALSE, 
+    allow_retry = TRUE, seed = 1642954457.73494, options = list(
+        placeholder = "Enter answer here...", trim = TRUE, rows = 2)), class = c("learnr_text", 
+"tutorial_question")), session = session)
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_text", label = "script-1-7", question = NULL, 
+    answers = list(structure(list(id = "lnr_ans_846fa72", option = character(0), 
+        value = NULL, label = NULL, correct = TRUE, message = NULL, 
+        type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Edit Answer", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+    "character")), try_again = NULL, incorrect = NULL, message = NULL, 
+        post_message = NULL), ids = list(answer = "script-1-7-answer", 
+        question = "script-1-7"), loading = NULL, random_answer_order = FALSE, 
+    allow_retry = TRUE, seed = 2032427125.55358, options = list(
+        placeholder = "Enter answer here...", trim = TRUE, rows = 2)), class = c("learnr_text", 
+"tutorial_question")), session = session)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_text", label = "script-1-8", question = NULL, 
+    answers = list(structure(list(id = "lnr_ans_1882fd8", option = character(0), 
+        value = NULL, label = NULL, correct = TRUE, message = NULL, 
+        type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Edit Answer", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+    "character")), try_again = NULL, incorrect = NULL, message = NULL, 
+        post_message = NULL), ids = list(answer = "script-1-8-answer", 
+        question = "script-1-8"), loading = NULL, random_answer_order = FALSE, 
+    allow_retry = TRUE, seed = 1803845770.16002, options = list(
+        placeholder = "Enter answer here...", trim = TRUE, rows = 3)), class = c("learnr_text", 
+"tutorial_question")), session = session)
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_text", label = "script-1-9", question = NULL, 
+    answers = list(structure(list(id = "lnr_ans_3e85ac6", option = character(0), 
+        value = NULL, label = NULL, correct = TRUE, message = NULL, 
+        type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Edit Answer", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+    "character")), try_again = NULL, incorrect = NULL, message = NULL, 
+        post_message = NULL), ids = list(answer = "script-1-9-answer", 
+        question = "script-1-9"), loading = NULL, random_answer_order = FALSE, 
+    allow_retry = TRUE, seed = 2021207413.5588, options = list(
+        placeholder = "Enter answer here...", trim = TRUE, rows = 2)), class = c("learnr_text", 
+"tutorial_question")), session = session)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_text", label = "script-2-1", question = NULL, 
+    answers = list(structure(list(id = "lnr_ans_e8e9656", option = character(0), 
+        value = NULL, label = NULL, correct = TRUE, message = NULL, 
+        type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Edit Answer", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+    "character")), try_again = NULL, incorrect = NULL, message = NULL, 
+        post_message = NULL), ids = list(answer = "script-2-1-answer", 
+        question = "script-2-1"), loading = NULL, random_answer_order = FALSE, 
+    allow_retry = TRUE, seed = 648544331.697998, options = list(
+        placeholder = "Enter answer here...", trim = TRUE, rows = 2)), class = c("learnr_text", 
+"tutorial_question")), session = session)
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_text", label = "script-2-2", question = NULL, 
+    answers = list(structure(list(id = "lnr_ans_ed33941", option = character(0), 
+        value = NULL, label = NULL, correct = TRUE, message = NULL, 
+        type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Edit Answer", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+    "character")), try_again = NULL, incorrect = NULL, message = NULL, 
+        post_message = NULL), ids = list(answer = "script-2-2-answer", 
+        question = "script-2-2"), loading = NULL, random_answer_order = FALSE, 
+    allow_retry = TRUE, seed = 790994671.631664, options = list(
+        placeholder = "Enter answer here...", trim = TRUE, rows = 3)), class = c("learnr_text", 
+"tutorial_question")), session = session)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_text", label = "script-2-3", question = NULL, 
+    answers = list(structure(list(id = "lnr_ans_29e36be", option = character(0), 
+        value = NULL, label = NULL, correct = TRUE, message = NULL, 
+        type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Edit Answer", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+    "character")), try_again = NULL, incorrect = NULL, message = NULL, 
+        post_message = NULL), ids = list(answer = "script-2-3-answer", 
+        question = "script-2-3"), loading = NULL, random_answer_order = FALSE, 
+    allow_retry = TRUE, seed = 2014110751.06211, options = list(
+        placeholder = "Enter answer here...", trim = TRUE, rows = 3)), class = c("learnr_text", 
+"tutorial_question")), session = session)
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_text", label = "script-2-4", question = NULL, 
+    answers = list(structure(list(id = "lnr_ans_7cb88e5", option = character(0), 
+        value = NULL, label = NULL, correct = TRUE, message = NULL, 
+        type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Edit Answer", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+    "character")), try_again = NULL, incorrect = NULL, message = NULL, 
+        post_message = NULL), ids = list(answer = "script-2-4-answer", 
+        question = "script-2-4"), loading = NULL, random_answer_order = FALSE, 
+    allow_retry = TRUE, seed = 299133305.360705, options = list(
+        placeholder = "Enter answer here...", trim = TRUE, rows = 2)), class = c("learnr_text", 
+"tutorial_question")), session = session)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_text", label = "script-2-5", question = NULL, 
+    answers = list(structure(list(id = "lnr_ans_322e6bd", option = character(0), 
+        value = NULL, label = NULL, correct = TRUE, message = NULL, 
+        type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Edit Answer", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+    "character")), try_again = NULL, incorrect = NULL, message = NULL, 
+        post_message = NULL), ids = list(answer = "script-2-5-answer", 
+        question = "script-2-5"), loading = NULL, random_answer_order = FALSE, 
+    allow_retry = TRUE, seed = 488811816.272379, options = list(
+        placeholder = "Enter answer here...", trim = TRUE, rows = 2)), class = c("learnr_text", 
+"tutorial_question")), session = session)
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_text", label = "script-2-6", question = NULL, 
+    answers = list(structure(list(id = "lnr_ans_1a8d9ed", option = character(0), 
+        value = NULL, label = NULL, correct = TRUE, message = NULL, 
+        type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Edit Answer", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+    "character")), try_again = NULL, incorrect = NULL, message = NULL, 
+        post_message = NULL), ids = list(answer = "script-2-6-answer", 
+        question = "script-2-6"), loading = NULL, random_answer_order = FALSE, 
+    allow_retry = TRUE, seed = 1864436195.6318, options = list(
+        placeholder = "Enter answer here...", trim = TRUE, rows = 2)), class = c("learnr_text", 
+"tutorial_question")), session = session)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_text", label = "script-2-7", question = NULL, 
+    answers = list(structure(list(id = "lnr_ans_4be5d33", option = character(0), 
+        value = NULL, label = NULL, correct = TRUE, message = NULL, 
+        type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Edit Answer", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+    "character")), try_again = NULL, incorrect = NULL, message = NULL, 
+        post_message = NULL), ids = list(answer = "script-2-7-answer", 
+        question = "script-2-7"), loading = NULL, random_answer_order = FALSE, 
+    allow_retry = TRUE, seed = 78196672.4635868, options = list(
+        placeholder = "Enter answer here...", trim = TRUE, rows = 2)), class = c("learnr_text", 
+"tutorial_question")), session = session)
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_text", label = "script-2-8", question = NULL, 
+    answers = list(structure(list(id = "lnr_ans_e50aba6", option = character(0), 
+        value = NULL, label = NULL, correct = TRUE, message = NULL, 
+        type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Edit Answer", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+    "character")), try_again = NULL, incorrect = NULL, message = NULL, 
+        post_message = NULL), ids = list(answer = "script-2-8-answer", 
+        question = "script-2-8"), loading = NULL, random_answer_order = FALSE, 
+    allow_retry = TRUE, seed = 2146066882.50066, options = list(
+        placeholder = "Enter answer here...", trim = TRUE, rows = 5)), class = c("learnr_text", 
+"tutorial_question")), session = session)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_text", label = "script-2-9", question = NULL, 
+    answers = list(structure(list(id = "lnr_ans_219cff8", option = character(0), 
+        value = NULL, label = NULL, correct = TRUE, message = NULL, 
+        type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Edit Answer", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+    "character")), try_again = NULL, incorrect = NULL, message = NULL, 
+        post_message = NULL), ids = list(answer = "script-2-9-answer", 
+        question = "script-2-9"), loading = NULL, random_answer_order = FALSE, 
+    allow_retry = TRUE, seed = 1653027036.23025, options = list(
+        placeholder = "Enter answer here...", trim = TRUE, rows = 3)), class = c("learnr_text", 
+"tutorial_question")), session = session)
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_text", label = "script-2-10", question = NULL, 
+    answers = list(structure(list(id = "lnr_ans_a8476e6", option = character(0), 
+        value = NULL, label = NULL, correct = TRUE, message = NULL, 
+        type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Edit Answer", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+    "character")), try_again = NULL, incorrect = NULL, message = NULL, 
+        post_message = NULL), ids = list(answer = "script-2-10-answer", 
+        question = "script-2-10"), loading = NULL, random_answer_order = FALSE, 
+    allow_retry = TRUE, seed = 1697451477.20956, options = list(
+        placeholder = "Enter answer here...", trim = TRUE, rows = 8)), class = c("learnr_text", 
+"tutorial_question")), session = session)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_text", label = "script-2-11", question = NULL, 
+    answers = list(structure(list(id = "lnr_ans_e28129c", option = character(0), 
+        value = NULL, label = NULL, correct = TRUE, message = NULL, 
+        type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Edit Answer", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+    "character")), try_again = NULL, incorrect = NULL, message = NULL, 
+        post_message = NULL), ids = list(answer = "script-2-11-answer", 
+        question = "script-2-11"), loading = NULL, random_answer_order = FALSE, 
+    allow_retry = TRUE, seed = 936506295.563905, options = list(
+        placeholder = "Enter answer here...", trim = TRUE, rows = 5)), class = c("learnr_text", 
+"tutorial_question")), session = session)
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_text", label = "script-2-13-ex", 
+    question = NULL, answers = list(structure(list(id = "lnr_ans_4802df7", 
+        option = character(0), value = NULL, label = NULL, correct = TRUE, 
+        message = NULL, type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Edit Answer", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+    "character")), try_again = NULL, incorrect = NULL, message = NULL, 
+        post_message = NULL), ids = list(answer = "script-2-13-ex-answer", 
+        question = "script-2-13-ex"), loading = NULL, random_answer_order = FALSE, 
+    allow_retry = TRUE, seed = 1430017896.8341, options = list(
+        placeholder = "Enter answer here...", trim = TRUE, rows = 3)), class = c("learnr_text", 
+"tutorial_question")), session = session)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_text", label = "script-2-12", question = NULL, 
+    answers = list(structure(list(id = "lnr_ans_aa97ea2", option = character(0), 
+        value = NULL, label = NULL, correct = TRUE, message = NULL, 
+        type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Edit Answer", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+    "character")), try_again = NULL, incorrect = NULL, message = NULL, 
+        post_message = NULL), ids = list(answer = "script-2-12-answer", 
+        question = "script-2-12"), loading = NULL, random_answer_order = FALSE, 
+    allow_retry = TRUE, seed = 514695544.260326, options = list(
+        placeholder = "Enter answer here...", trim = TRUE, rows = 2)), class = c("learnr_text", 
+"tutorial_question")), session = session)
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_text", label = "script-3-1", question = NULL, 
+    answers = list(structure(list(id = "lnr_ans_34477d3", option = character(0), 
+        value = NULL, label = NULL, correct = TRUE, message = NULL, 
+        type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Edit Answer", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+    "character")), try_again = NULL, incorrect = NULL, message = NULL, 
+        post_message = NULL), ids = list(answer = "script-3-1-answer", 
+        question = "script-3-1"), loading = NULL, random_answer_order = FALSE, 
+    allow_retry = TRUE, seed = 347364958.838246, options = list(
+        placeholder = "Enter answer here...", trim = TRUE, rows = 5)), class = c("learnr_text", 
+"tutorial_question")), session = session)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_text", label = "script-3-2", question = NULL, 
+    answers = list(structure(list(id = "lnr_ans_ac3809a", option = character(0), 
+        value = NULL, label = NULL, correct = TRUE, message = NULL, 
+        type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Edit Answer", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+    "character")), try_again = NULL, incorrect = NULL, message = NULL, 
+        post_message = NULL), ids = list(answer = "script-3-2-answer", 
+        question = "script-3-2"), loading = NULL, random_answer_order = FALSE, 
+    allow_retry = TRUE, seed = 522395830.75674, options = list(
+        placeholder = "Enter answer here...", trim = TRUE, rows = 3)), class = c("learnr_text", 
+"tutorial_question")), session = session)
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_text", label = "script-3-3", question = NULL, 
+    answers = list(structure(list(id = "lnr_ans_7ef374e", option = character(0), 
+        value = NULL, label = NULL, correct = TRUE, message = NULL, 
+        type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Edit Answer", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+    "character")), try_again = NULL, incorrect = NULL, message = NULL, 
+        post_message = NULL), ids = list(answer = "script-3-3-answer", 
+        question = "script-3-3"), loading = NULL, random_answer_order = FALSE, 
+    allow_retry = TRUE, seed = 1159032677.96028, options = list(
+        placeholder = "Enter answer here...", trim = TRUE, rows = 5)), class = c("learnr_text", 
+"tutorial_question")), session = session)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_text", label = "script-3-4", question = NULL, 
+    answers = list(structure(list(id = "lnr_ans_f822261", option = character(0), 
+        value = NULL, label = NULL, correct = TRUE, message = NULL, 
+        type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Edit Answer", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+    "character")), try_again = NULL, incorrect = NULL, message = NULL, 
+        post_message = NULL), ids = list(answer = "script-3-4-answer", 
+        question = "script-3-4"), loading = NULL, random_answer_order = FALSE, 
+    allow_retry = TRUE, seed = 901863474.580037, options = list(
+        placeholder = "Enter answer here...", trim = TRUE, rows = 3)), class = c("learnr_text", 
+"tutorial_question")), session = session)
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_text", label = "script-3-5", question = NULL, 
+    answers = list(structure(list(id = "lnr_ans_d2294e2", option = character(0), 
+        value = NULL, label = NULL, correct = TRUE, message = NULL, 
+        type = "literal"), class = c("tutorial_question_answer", 
+    "tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+    "character")), try_again = structure("Edit Answer", html = TRUE, class = c("html", 
+    "character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+    "character")), try_again = NULL, incorrect = NULL, message = NULL, 
+        post_message = NULL), ids = list(answer = "script-3-5-answer", 
+        question = "script-3-5"), loading = NULL, random_answer_order = FALSE, 
+    allow_retry = TRUE, seed = 1299917468.89468, options = list(
+        placeholder = "Enter answer here...", trim = TRUE, rows = 3)), class = c("learnr_text", 
+"tutorial_question")), session = session)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::question_prerendered_chunk(structure(list(type = "learnr_numeric", label = "minutes", question = structure("How many minutes, approximately, did it take you to complete this tutorial? For example, an hour and a half would be 90 minutes.", html = TRUE, class = c("html", 
+"character")), answers = list(structure(list(id = "lnr_ans_94374ee", 
+    option = character(0), value = NULL, label = NULL, correct = TRUE, 
+    message = NULL, type = "literal"), class = c("tutorial_question_answer", 
+"tutorial_quiz_answer"))), button_labels = list(submit = structure("<span data-i18n=\"button.questionsubmit\">Submit Answer<\u002fspan>", html = TRUE, class = c("html", 
+"character")), try_again = structure("<span data-i18n=\"button.questiontryagain\">Try Again<\u002fspan>", html = TRUE, class = c("html", 
+"character"))), messages = list(correct = structure("Correct!", html = TRUE, class = c("html", 
+"character")), try_again = NULL, incorrect = NULL, message = NULL, 
+    post_message = NULL), ids = list(answer = "minutes-answer", 
+    question = "minutes"), loading = NULL, random_answer_order = FALSE, 
+    allow_retry = TRUE, seed = 1777278237.17239, options = list(
+        min = 0, max = 360, step = 1, tolerance = 1.5e-08)), class = c("learnr_numeric", 
+"tutorial_question")), session = session)
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server-start">
+tutorial.helpers::submission_ui
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+tutorial.helpers::submission_server()
+</script>
+</p>
+<!--html_preserve-->
+<script type="application/shiny-prerendered" data-context="dependencies">
+{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["header-attrs"]},{"type":"character","attributes":{},"value":["2.29"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/pandoc"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["header-attrs.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["2.29"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["jquery"]},{"type":"character","attributes":{},"value":["3.6.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/3.6.0"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquery-3.6.0.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquerylib"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.1.4"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["bootstrap"]},{"type":"character","attributes":{},"value":["3.3.5"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/bootstrap"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["viewport"]}},"value":[{"type":"character","attributes":{},"value":["width=device-width, initial-scale=1"]}]},{"type":"character","attributes":{},"value":["js/bootstrap.min.js","shim/html5shiv.min.js","shim/respond.min.js"]},{"type":"character","attributes":{},"value":["css/cerulean.min.css"]},{"type":"character","attributes":{},"value":["<style>h1 {font-size: 34px;}\n       h1.title {font-size: 38px;}\n       h2 {font-size: 30px;}\n       h3 {font-size: 24px;}\n       h4 {font-size: 18px;}\n       h5 {font-size: 16px;}\n       h6 {font-size: 12px;}\n       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}\n       pre:not([class]) { background-color: white }<\/style>"]},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["2.29"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["pagedtable"]},{"type":"character","attributes":{},"value":["1.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/pagedtable-1.1"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["js/pagedtable.js"]},{"type":"character","attributes":{},"value":["css/pagedtable.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["2.29"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["highlightjs"]},{"type":"character","attributes":{},"value":["9.12.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/highlightjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["highlight.js"]},{"type":"character","attributes":{},"value":["textmate.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["2.29"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial"]},{"type":"character","attributes":{},"value":["0.11.5"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/tutorial"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial.js"]},{"type":"character","attributes":{},"value":["tutorial.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["i18n"]},{"type":"character","attributes":{},"value":["21.6.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/i18n"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["i18next.min.js","tutorial-i18n-init.js"]},{"type":"NULL"},{"type":"character","attributes":{},"value":["<script id=\"i18n-cstm-trns\" type=\"application/json\">{\"language\":\"en\",\"resources\":{\"en\":{\"translation\":{\"button\":{\"runcode\":\"Run Code\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"Hint\",\"hint_plural\":\"Hints\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"Next Hint\",\"hintprev\":\"Previous Hint\",\"solution\":\"Solution\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"Copy to Clipboard\",\"startover\":\"Start Over\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"Continue\",\"submitanswer\":\"Submit Answer\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"Previous Topic\",\"nexttopic\":\"Next Topic\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"Try Again\"},\"text\":{\"startover\":\"Start Over\",\"areyousure\":\"Are you sure you want to start over? (all exercise progress will be reset)\",\"youmustcomplete\":\"You must complete the\",\"exercise\":\"exercise\",\"exercise_plural\":\"exercises\",\"inthissection\":\"in this section before continuing.\",\"code\":\"Code\",\"enginecap\":\"{{engine}} $t(text.code)\",\"quiz\":\"Quiz\",\"blank\":\"blank\",\"blank_plural\":\"blanks\",\"exercisecontainsblank\":\"This exercise contains {{count}} $t(text.blank).\",\"pleasereplaceblank\":\"Please replace {{blank}} with valid code.\",\"unparsable\":\"It looks like this might not be valid R code. R cannot determine how to turn your text into a complete command. You may have forgotten to fill in a blank, to remove an underscore, to include a comma between arguments, or to close an opening <code>&quot;<\\/code>, <code>'<\\/code>, <code>(<\\/code> or <code>{<\\/code> with a matching <code>&quot;<\\/code>, <code>'<\\/code>, <code>)<\\/code> or <code>}<\\/code>.\\n\",\"unparsablequotes\":\"<p>It looks like your R code contains specially formatted quotation marks or &quot;curly&quot; quotes (<code>{{character}}<\\/code>) around character strings, making your code invalid. R requires character values to be contained in straight quotation marks (<code>&quot;<\\/code> or <code>'<\\/code>).<\\/p> {{code}} <p>Don't worry, this is a common source of errors when you copy code from another app that applies its own formatting to text. You can try replacing the code on that line with the following. There may be other places that need to be fixed, too.<\\/p> {{suggestion}}\\n\",\"unparsableunicode\":\"<p>It looks like your R code contains an unexpected special character (<code>{{character}}<\\/code>) that makes your code invalid.<\\/p> {{code}} <p>Sometimes your code may contain a special character that looks like a regular character, especially if you copy and paste the code from another app. Try deleting the special character from your code and retyping it manually.<\\/p>\\n\",\"unparsableunicodesuggestion\":\"<p>It looks like your R code contains an unexpected special character (<code>{{character}}<\\/code>) that makes your code invalid.<\\/p> {{code}} <p>Sometimes your code may contain a special character that looks like a regular character, especially if you copy and paste the code from another app. You can try replacing the code on that line with the following. There may be other places that need to be fixed, too.<\\/p> {{suggestion}}\\n\",\"and\":\"and\",\"or\":\"or\",\"listcomma\":\", \",\"oxfordcomma\":\",\"}}},\"fr\":{\"translation\":{\"button\":{\"runcode\":\"Lancer le Code\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"Indication\",\"hint_plural\":\"Indications\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"Indication Suivante\",\"hintprev\":\"Indication Précédente\",\"solution\":\"Solution\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"Copier dans le Presse-papier\",\"startover\":\"Recommencer\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"Continuer\",\"submitanswer\":\"Soumettre\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"Chapitre Précédent\",\"nexttopic\":\"Chapitre Suivant\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"Réessayer\"},\"text\":{\"startover\":\"Recommencer\",\"areyousure\":\"Êtes-vous certains de vouloir recommencer? (La progression sera remise à zéro)\",\"youmustcomplete\":\"Vous devez d'abord compléter\",\"exercise\":\"l'exercice\",\"exercise_plural\":\"des exercices\",\"inthissection\":\"de cette section avec de continuer.\",\"code\":\"Code\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"Quiz\",\"and\":\"et\",\"or\":\"ou\",\"oxfordcomma\":\"\"}}},\"es\":{\"translation\":{\"button\":{\"runcode\":\"Ejecutar código\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"Pista\",\"hint_plural\":\"Pistas\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"Siguiente pista\",\"hintprev\":\"Pista anterior\",\"solution\":\"Solución\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"Copiar al portapapeles\",\"startover\":\"Reiniciar\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"Continuar\",\"submitanswer\":\"Enviar respuesta\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"Tema anterior\",\"nexttopic\":\"Tema siguiente\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"Volver a intentar\"},\"text\":{\"startover\":\"Reiniciar\",\"areyousure\":\"¿De verdad quieres empezar de nuevo? (todo el progreso del ejercicio se perderá)\",\"youmustcomplete\":\"Debes completar\",\"exercise\":\"el ejercicio\",\"exercise_plural\":\"los ejercicios\",\"inthissection\":\"en esta sección antes de continuar.\",\"code\":\"Código\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"Cuestionario\",\"and\":\"y\",\"or\":\"o\",\"oxfordcomma\":\"\"}}},\"pt\":{\"translation\":{\"button\":{\"runcode\":\"Executar código\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"Dica\",\"hint_plural\":\"Dicas\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"Próxima dica\",\"hintprev\":\"Dica anterior\",\"solution\":\"Solução\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"Copiar para a área de transferência\",\"startover\":\"Reiniciar\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"Continuar\",\"submitanswer\":\"Enviar resposta\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"Tópico anterior\",\"nexttopic\":\"Próximo tópico\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"Tentar novamente\"},\"text\":{\"startover\":\"Reiniciar\",\"areyousure\":\"Tem certeza que deseja começar novamente? (todo o progresso feito será perdido)\",\"youmustcomplete\":\"Você deve completar\",\"exercise\":\"o exercício\",\"exercise_plural\":\"os exercícios\",\"inthissection\":\"nesta seção antes de continuar.\",\"code\":\"Código\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"Quiz\",\"and\":\"e\",\"or\":\"ou\",\"oxfordcomma\":\"\"}}},\"tr\":{\"translation\":{\"button\":{\"runcode\":\"Çalıştırma Kodu\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"Ipucu\",\"hint_plural\":\"İpuçları\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"Sonraki İpucu\",\"hintprev\":\"Önceki İpucu\",\"solution\":\"Çözüm\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"Pano'ya Kopyala\",\"startover\":\"Baştan Başlamak\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"Devam et\",\"submitanswer\":\"Cevabı onayla\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"Önceki Konu\",\"nexttopic\":\"Sonraki Konu\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"Tekrar Deneyin\"},\"text\":{\"startover\":\"Baştan Başlamak\",\"areyousure\":\"Baştan başlamak istediğinizden emin misiniz? (tüm egzersiz ilerlemesi kaybolacak)\",\"youmustcomplete\":\"Tamamlamalısın\",\"exercise\":\"egzersiz\",\"exercise_plural\":\"egzersizler\",\"inthissection\":\"devam etmeden önce bu bölümde\",\"code\":\"Kod\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"Sınav\",\"oxfordcomma\":\"\"}}},\"emo\":{\"translation\":{\"button\":{\"runcode\":\"🏃\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"💡\",\"hint_plural\":\"$t(button.hint)\",\"hinttitle\":\"$t(button.hint)\",\"solution\":\"🎯\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"📋\",\"startover\":\"⏮\",\"startovertitle\":\"Start Over\",\"continue\":\"✅\",\"submitanswer\":\"🆗\",\"submitanswertitle\":\"Submit Answer\",\"previoustopic\":\"⬅\",\"nexttopic\":\"➡\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"🔁\"},\"text\":{\"startover\":\"⏮\",\"areyousure\":\"🤔\",\"youmustcomplete\":\"⚠️ 👉 🧑‍💻\",\"exercise\":\"\",\"exercise_plural\":\"\",\"inthissection\":\"\",\"code\":\"💻\",\"enginecap\":\"$t(text.code) {{engine}}\",\"oxfordcomma\":\"\"}}},\"eu\":{\"translation\":{\"button\":{\"runcode\":\"Kodea egikaritu\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"Laguntza\",\"hint_plural\":\"Laguntza\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"Aurreko laguntza\",\"hintprev\":\"Hurrengo laguntza\",\"solution\":\"Ebazpena\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"Arbelean kopiatu\",\"startover\":\"Berrabiarazi\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"Jarraitu\",\"submitanswer\":\"Erantzuna bidali\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"Aurreko atala\",\"nexttopic\":\"Hurrengo atala\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"Berriro saiatu\"},\"text\":{\"startover\":\"Berrabiarazi\",\"areyousure\":\"Berriro hasi nahi duzu? (egindako lana galdu egingo da)\",\"youmustcomplete\":\"Aurrera egin baino lehen atal honetako\",\"exercise\":\"ariketa egin behar duzu.\",\"exercise_plural\":\"ariketak egin behar dituzu.\",\"inthissection\":\"\",\"code\":\"Kodea\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"Galdetegia\",\"oxfordcomma\":\"\"}}},\"de\":{\"translation\":{\"button\":{\"runcode\":\"Code ausführen\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"Tipp\",\"hint_plural\":\"Tipps\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"Nächster Tipp\",\"hintprev\":\"Vorheriger Tipp\",\"solution\":\"Lösung\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"In die Zwischenablage kopieren\",\"startover\":\"Neustart\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"Weiter\",\"submitanswer\":\"Antwort einreichen\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"Vorheriges Kapitel\",\"nexttopic\":\"Nächstes Kapitel\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"Nochmal versuchen\"},\"text\":{\"startover\":\"Neustart\",\"areyousure\":\"Bist du sicher, dass du neustarten willst? (der gesamte Lernfortschritt wird gelöscht)\",\"youmustcomplete\":\"Vervollstädinge\",\"exercise\":\"die Übung\",\"exercise_plural\":\"die Übungen\",\"inthissection\":\"in diesem Kapitel, bevor du fortfährst.\",\"code\":\"Code\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"Quiz\",\"blank\":\"Lücke\",\"blank_plural\":\"Lücken\",\"pleasereplaceblank\":\"Bitte ersetze {{blank}} mit gültigem Code.\",\"unparsable\":\"Dies scheint kein gültiger R Code zu sein. R kann deinen Text nicht in einen gültigen Befehl übersetzen. Du hast vielleicht vergessen, die Lücke zu füllen, einen Unterstrich zu entfernen, ein Komma zwischen Argumente zu setzen oder ein eröffnendes <code>&quot;<\\/code>, <code>'<\\/code>, <code>(<\\/code> oder <code>{<\\/code> mit einem zugehörigen <code>&quot;<\\/code>, <code>'<\\/code>, <code>)<\\/code> oder <code>}<\\/code> zu schließen.\\n\",\"and\":\"und\",\"or\":\"oder\",\"listcomma\":\", \",\"oxfordcomma\":\",\"}}},\"ko\":{\"translation\":{\"button\":{\"runcode\":\"코드 실행\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"힌트\",\"hint_plural\":\"힌트들\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"다음 힌트\",\"hintprev\":\"이전 힌트\",\"solution\":\"솔루션\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"클립보드에 복사\",\"startover\":\"재학습\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"다음 학습으로\",\"submitanswer\":\"정답 제출\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"이전 토픽\",\"nexttopic\":\"다음 토픽\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"재시도\"},\"text\":{\"startover\":\"재학습\",\"areyousure\":\"다시 시작 하시겠습니까? (모든 예제의 진행 정보가 재설정됩니다)\",\"youmustcomplete\":\"당신은 완료해야 합니다\",\"exercise\":\"연습문제\",\"exercise_plural\":\"연습문제들\",\"inthissection\":\"이 섹션을 실행하기 전에\",\"code\":\"코드\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"퀴즈\",\"blank\":\"공백\",\"blank_plural\":\"공백들\",\"exercisecontainsblank\":\"이 연습문제에는 {{count}}개의 $t(text.blank)이 포함되어 있습니다.\",\"pleasereplaceblank\":\"{{blank}}를 유효한 코드로 바꾸십시오.\",\"unparsable\":\"이것은 유효한 R 코드가 아닐 수 있습니다. R은 텍스트를 완전한 명령으로 변환하는 방법을 결정할 수 없습니다. 당신은 공백이나 밑줄을 대체하여 채우기, 인수를 컴마로 구분하기, 또는 <code>&quot;<\\/code>, <code>'<\\/code>, <code>(<\\/code> , <code>{<\\/code>로 시작하는 구문을 닫는 <code>&quot;<\\/code>, <code>'<\\/code>, <code>)<\\/code>, <code>}<\\/code>을 잊었을 수도 있습니다.\\n\",\"and\":\"그리고\",\"or\":\"혹은\",\"listcomma\":\", \",\"oxfordcomma\":\"\"}}},\"zh\":{\"translation\":{\"button\":{\"runcode\":\"运行代码\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"提示\",\"hint_plural\":\"提示\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"下一个提示\",\"hintprev\":\"上一个提示\",\"solution\":\"答案\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"复制到剪切板\",\"startover\":\"重新开始\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"继续\",\"submitanswer\":\"提交答案\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"上一专题\",\"nexttopic\":\"下一专题\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"再试一次\"},\"text\":{\"startover\":\"重置\",\"areyousure\":\"你确定要重新开始吗? (所有当前进度将被重置)\",\"youmustcomplete\":\"你必须完成\",\"exercise\":\"练习\",\"exercise_plural\":\"练习\",\"inthissection\":\"在进行本节之前\",\"code\":\"代码\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"测试\",\"blank\":\"空\",\"blank_plural\":\"空\",\"exercisecontainsblank\":\"本练习包含{{count}}个$t(text.blank)\",\"pleasereplaceblank\":\"请在{{blank}}内填写恰当的代码\",\"unparsable\":\"这似乎不是有效的R代码。 R不知道如何将您的文本转换为完整的命令。 您是否忘了填空，忘了删除下划线，忘了在参数之间包含逗号，或者是忘了用<code>&quot;<\\/code>, <code>'<\\/code>, <code>)<\\/code>,<code>}<\\/code>来封闭<code>&quot;<\\/code>, <code>'<\\/code>, <code>(<\\/code>。 or <code>{<\\/code>。\\n\",\"unparsablequotes\":\"<p>您的R代码中似乎含有特殊格式的引号，或者弯引号(<code>{{character}}<\\/code>) 在字符串前后，在R中字符串应该被直引号(<code>&quot;<\\/code> 或者 <code>'<\\/code>)包裹。<\\/p> {{code}} <p>别担心，该错误经常在复制粘贴包含格式的代码时遇到， 您可以尝试将该行中的代码替换为以下代码，也许还有其他地方需要修改。<\\/p> {{suggestion}}\\n\",\"unparsableunicode\":\"<p>您的代码中似乎包含有异常字符(<code>{{character}}<\\/code>),导致代码无效。<\\/p> {{code}} <p>有时候你的代码可能含有看似正常字符的特殊字符，特别是当你复制粘贴其他来源代码的时候。 请试着删除这些特殊字符,重新输入<\\/p>\\n\",\"unparsableunicodesuggestion\":\"<p>您的代码中似乎包含有异常字符(<code>{{character}}<\\/code>),导致代码无效。<\\/p> {{code}} <p>有时候你的代码可能含有看似正常字符的特殊字符，特别是当你复制粘贴其他来源代码的时候。 请试着删除这些特殊字符,重新输入<\\/p>\\n\",\"and\":\"且\",\"or\":\"或\",\"listcomma\":\",\",\"oxfordcomma\":\",\"}}},\"pl\":{\"translation\":{\"button\":{\"runcode\":\"Uruchom kod\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"Podpowiedź\",\"hint_plural\":\"Podpowiedzi\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"Następna podpowiedź\",\"hintprev\":\"Poprzednia podpowiedź\",\"solution\":\"Rozwiązanie\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"Kopiuj do schowka\",\"startover\":\"Zacznij od początku\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"Kontynuuj\",\"submitanswer\":\"Wyślij\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"Poprzednia sekcja\",\"nexttopic\":\"Następna sekcja\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"Spróbuj ponownie\"},\"text\":{\"startover\":\"Zacznij od początku\",\"areyousure\":\"Czy na pewno chcesz zacząć od początku? (cały postęp w zadaniu zostanie utracony)\",\"youmustcomplete\":\"Musisz ukończyć\",\"exercise\":\"ćwiczenie\",\"exercise_plural\":\"ćwiczenia\",\"inthissection\":\"w tej sekcji przed kontynuowaniem\",\"code\":\"Kod\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"Quiz\",\"blank\":\"luka\",\"blank_plural\":\"luk(i)\",\"exercisecontainsblank\":\"To ćwiczenie zawiera {{count}} $t(text.blank).\",\"pleasereplaceblank\":\"Proszę uzupełnić {{blank}} prawidłowym kodem.\",\"unparsable\":\"Wygląda na to, że może to nie być prawidłowy kod R. R nie jest w stanie przetworzyć Twojego tekstu na polecenie. Mogłeś(-aś) zapomnieć wypełnić luki, usunąć podkreślnik, umieścić przecinka między argumentami, lub zamknąć znak <code>&quot;<\\/code>, <code>'<\\/code>, <code>(<\\/code> lub <code>{<\\/code> odpowiadającym <code>&quot;<\\/code>, <code>'<\\/code>, <code>)<\\/code> lub <code>}<\\/code>.\\n\",\"unparsablequotes\":\"<p>Wygląda na to, że Twój kod zawiera szczególnie sformatowane cudzysłowy lub cudzysłowy typograficzne (<code>{{character}}<\\/code>) przy ciągach znaków, co sprawia, że kod jest niepoprawny. R wymaga cudzysłowów prostych (<code>&quot;<\\/code> albo <code>'<\\/code>).<\\/p> {{code}} <p>Nie martw się, to powszechne źródło błędów, gdy kopiuje się kod z innego programu, który sam formatuje teskt. Możesz spróbować zastąpić swój kod następującym kodem. Mogą być też inne miejsca, które wymagają poprawienia.<\\/p> {{suggestion}}\\n\",\"unparsableunicode\":\"<p>Wygląda na to, że Twój kod zawiera niespodziewany znak specjalny (<code>{{character}}<\\/code>), co sprawia, że kod jest niepoprawny.<\\/p> {{code}} <p>Czasami Twój kod może zawierać znak specjalny, który wygląda jak zwykły znak, zwłaszcza jeśli kopiujesz kod z innego programu. Spróbuj usunąć znak specjalny i wpisać do ponownie ręcznie.<\\/p>\\n\",\"unparsableunicodesuggestion\":\"<p>Wygląda na to, że Twój kod zawiera niespodziewany znak specjalny (<code>{{character}}<\\/code>), co sprawia, że kod jest niepoprawny.<\\/p> {{code}} <p>Czasami Twój kod może zawierać znak specjalny, który wygląda jak zwykły znak, zwłaszcza jeśli kopiujesz kod z innego programu. Możesz spróbować zastąpić swój kod następującym kodem. Mogą być też inne miejsca, które wymagają poprawienia.<\\/p> {{suggestion}}\\n\",\"and\":\"i\",\"or\":\"lub\",\"listcomma\":\", \",\"oxfordcomma\":\"\"}}}}}<\/script>"]},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial-format"]},{"type":"character","attributes":{},"value":["0.11.5"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmarkdown/templates/tutorial/resources"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial-format.js"]},{"type":"character","attributes":{},"value":["tutorial-format.css","rstudio-theme.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["jquery"]},{"type":"character","attributes":{},"value":["3.6.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/3.6.0"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquery-3.6.0.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquerylib"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.1.4"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["navigation"]},{"type":"character","attributes":{},"value":["1.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/navigation-1.1"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tabsets.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["2.29"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["highlightjs"]},{"type":"character","attributes":{},"value":["9.12.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/highlightjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["highlight.js"]},{"type":"character","attributes":{},"value":["default.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["2.29"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["jquery"]},{"type":"character","attributes":{},"value":["3.6.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/3.6.0"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquery-3.6.0.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquerylib"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.1.4"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["font-awesome"]},{"type":"character","attributes":{},"value":["6.5.2"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["fontawesome"]}]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["css/all.min.css","css/v4-shims.min.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["fontawesome"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.5.3"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["bootbox"]},{"type":"character","attributes":{},"value":["5.5.2"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/bootbox"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["bootbox.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["idb-keyvalue"]},{"type":"character","attributes":{},"value":["3.2.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/idb-keyval"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["idb-keyval-iife-compat.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[false]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial"]},{"type":"character","attributes":{},"value":["0.11.5"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/tutorial"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial.js"]},{"type":"character","attributes":{},"value":["tutorial.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.5"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["jquery"]},{"type":"character","attributes":{},"value":["3.6.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["www/shared"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquery.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["shiny"]},{"type":"logical","attributes":{},"value":[false]},{"type":"character","attributes":{},"value":["1.10.0"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["font-awesome"]},{"type":"character","attributes":{},"value":["6.5.2"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["fontawesome"]}]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["css/all.min.css","css/v4-shims.min.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["fontawesome"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.5.3"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["bootstrap"]},{"type":"character","attributes":{},"value":["3.4.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["www/shared/bootstrap"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["viewport"]}},"value":[{"type":"character","attributes":{},"value":["width=device-width, initial-scale=1"]}]},{"type":"character","attributes":{},"value":["js/bootstrap.min.js","accessibility/js/bootstrap-accessibility.min.js"]},{"type":"character","attributes":{},"value":["css/bootstrap.min.css","accessibility/css/bootstrap-accessibility.min.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["shiny"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["1.10.0"]}]}]}
+</script>
+<!--/html_preserve-->
+<!--html_preserve-->
+<script type="application/shiny-prerendered" data-context="execution_dependencies">
+{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages","version"]},"class":{"type":"character","attributes":{},"value":["data.frame"]},"row.names":{"type":"integer","attributes":{},"value":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77]}},"value":[{"type":"character","attributes":{},"value":["backports","base","bslib","cachem","checkmate","cli","colorspace","commonmark","compiler","datasets","digest","dplyr","ellipsis","evaluate","farver","fastmap","fontawesome","forcats","generics","ggplot2","glue","graphics","grDevices","grid","gtable","hms","htmltools","htmlwidgets","httpuv","httr","jquerylib","jsonlite","knitr","labeling","later","learnr","lifecycle","lubridate","magrittr","markdown","methods","mime","munsell","pillar","pkgconfig","promises","purrr","R6","Rcpp","readr","renv","rlang","rmarkdown","rprojroot","rstudioapi","rvest","sass","scales","shiny","stats","stringi","stringr","tibble","tidyr","tidyselect","tidyverse","timechange","tools","tutorial.helpers","tzdb","utils","vctrs","withr","xfun","xml2","xtable","yaml"]},{"type":"character","attributes":{},"value":["1.5.0","4.4.2","0.9.0","1.1.0","2.3.2","3.6.3","2.1-0","1.9.2","4.4.2","4.4.2","0.6.37","1.1.4","0.3.2","1.0.3","2.1.1","1.2.0","0.5.3","1.0.0","0.1.3","3.5.1","1.8.0","4.4.2","4.4.2","4.4.2","0.3.5","1.1.3","0.5.8.1","1.6.4","1.6.15","1.4.7","0.1.4","1.9.0","1.49","0.4.3","1.4.1","0.11.5","1.0.4","1.9.3","2.0.3","1.13","4.4.2","0.12","0.5.1","1.10.1","2.0.3","1.3.2","1.0.4","2.6.0","1.0.14","2.1.5","1.1.1","1.1.5","2.29","2.0.4","0.17.1","1.0.4","0.4.9","1.3.0","1.10.0","4.4.2","1.8.4","1.5.1","3.2.1","1.3.1","1.2.1","2.0.0","0.3.0","4.4.2","0.3.1.9002","0.4.0","4.4.2","0.6.5","3.0.2","0.50","1.3.6","1.8-4","2.3.10"]}]}]}
+</script>
+<!--/html_preserve-->
+</div>
+</div>
+
+</article> <!-- topics -->
+
+<div class="topicsContainer">
+<div class="topicsPositioner">
+<div class="band">
+<div class="bandContent topicsListContainer">
+
+<!-- begin doc-metadata -->
+<div id="doc-metadata">
+<h1 class="title toc-ignore" style="display:none;">Positron and
+code</h1>
+<h4 class="author"><em>David Kane</em></h4>
+</div>
+<!-- end doc-metadata -->
+
+</div> <!-- bandContent.topicsListContainer -->
+</div> <!-- band -->
+</div> <!-- topicsPositioner -->
+</div> <!-- topicsContainer -->
+
+
+</main> <!-- bandContent page -->
+</div> <!-- pageContent band -->
+
+
+
+<!-- Build Tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("section-TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<script>
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+</script>
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+
+</body>
+
+</html>
