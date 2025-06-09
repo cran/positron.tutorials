@@ -2,7 +2,7 @@
 title: Positron and GitHub Introduction
 author: David Kane
 tutorial:
-  id: positron-and-github-introduction
+  id: 04-github-1
 output:
   learnr::tutorial:
     progressive: yes
@@ -32,15 +32,13 @@ options(tutorial.exercise.timelimit = 60,
 ```{r info-section, child = system.file("child_documents/info_section.Rmd", package = "tutorial.helpers")}
 ```
 
-<!-- Couple of DK comments below which indicate how to expand a couple of questions. -->
+<!-- Change First-Repo to `repo-1`. Then, update all the relevant PNG files. -->
 
 <!-- Stop being afraid of the command line. Use lots of git commands.  -->
 
-<!-- Maybe delete gitcreds and usethis, and then use the command line? -->
+<!-- Should we be using suppressPack..() and execute: trickery in our publishing example? Or should we make it simpler, just using code chunk options?  -->
 
-<!-- Can we add some tests? Maybe set up a test environment of some type, perhaps by setting up all sets of scaffolding for testthat? -->
-
-<!-- Consider switching to lower case names for repos. But then we would probably need to redo lots of the images . . . -->
+<!-- Should we have a repo-3? Only if this tutorial only takes 45 minutes now, which I doubt. -->
 
 ## Introduction
 ### 
@@ -49,18 +47,23 @@ This tutorial covers [Git](https://git-scm.com/), a program for keeping track of
 
 The most useful reference for Git/GitHub is [*Happy Git and GitHub for the useR*](https://happygitwithr.com/). Refer to that book whenever you have a problem.
 
+### 
+
+Start a new window with `File -> New Window`. This new window is the location in which you will do all the work for the tutorial, including the creation of new projects. The current window, the one in which you are reading these words, is just used to run this tutorial. 
+
+
 ## Terminal Overview
 ### 
 
 The Positron [Terminal](https://docs.posit.co/ide/user/ide/guide/tools/terminal.html) is how you directly communicate with the computer using commands, whereas the Positron [Console](https://docs.posit.co/ide/user/ide/guide/code/console.html) is how you talk to R.
 
-This section will help introduce you to the Terminal so that you'll be up to speed for the commands needed later.
+This section will help introduce you to the Terminal if you have not worked at the command line before, or it will serves as a refresher if you have.
 
 ### Exercise 1
 
 Start by clicking on the Terminal tab in Positron. This is next to the Console tab in the bottom Panel.
 
-You should see some text, which is a portion of the path to the current working directory, followed by a prompt such as a dollar sign. Copy (by highlighting, then right clicking and selecting the "copy" option) and paste the entire prompt into the box below.
+You should see some text, which is a portion of the path to the current working directory, followed by a prompt such as `%` or `$`. Copy and paste the entire prompt into the box below.
 
 We abbreviate the instructions **c**opy/**p**aste the **c**ommand/**r**esponse as CP/CR throughout this tutorial.
 
@@ -91,7 +94,7 @@ Paths differ. They often include the username, which is `dkane` for me. They als
 
 ### Exercise 2
 
-Type the command `pwd` in your Terminal and hit return. CP/CR.
+Type the command `pwd` in your Terminal and hit `enter`. CP/CR.
 
 ```{r terminal-overview-2}
 question_text(NULL,
@@ -116,35 +119,28 @@ Your answer will be different, not least because your username is unlikely to be
 
 Going forward, make sure to pay special attention to whether given commands are supposed to be run in the *Console* or the *Terminal*.
 
-<!-- DK: Add a guide to the window, including the Source Control button? -->
-
 ## Setting up Git
 ### 
 
-Professionals store their work on GitHub, or a similar "source control" tool. If your computer blows up, you don't want to lose your work. GitHub is like Google Drive --- both live in the cloud --- but for your computational work rather than your documents.
+Professionals store their work on GitHub, or a similar *source control* tool. If your computer blows up, you don't want to lose your work. GitHub is like Google Drive --- both live in the cloud --- but for your computational work rather than your documents.
 
-GitHub is an online drive for all your R code and projects. In the professional world, what you have on your GitHub account is more important than what you have on your resume. It is a verifiable demonstration of your abilities.
+GitHub is an online drive for all your R code and projects. In the professional world, what you have on your GitHub account is sometimes more important than what you have on your resume. It is a verifiable demonstration of your abilities.
+
 
 ### Exercise 1
 
-Install [Git](https://git-scm.com/) by following the instructions of the [Install Git](https://happygitwithr.com/install-git.html) chapter in [*Happy Git and GitHub for the useR*](https://happygitwithr.com/).
-
-### 
-
-After you install Git, you should quit and then restart Positron so that it has a chance to "recognize" that Git is installed. (Note that restarting Positron is **not** the same as restarting your R session **within** your Positron instance. To quit Positron you need to go to the `Positron -> Quit Positron` menu item.)
-
-After restarting Positron, click on the Terminal tab. Run `git --version` in the Terminal to make sure that Git is installed and accessible. CP/CR.
+Run `git --version` in the Terminal to make sure that Git is installed and accessible. CP/CR.
 
 ```{r setting-up-git-1}
 question_text(NULL,
-    answer(NULL, correct = TRUE),
-    allow_retry = TRUE,
-    try_again_button = "Edit Answer",
-    incorrect = NULL,
-    rows = 2)
+	answer(NULL, correct = TRUE),
+	allow_retry = TRUE,
+	try_again_button = "Edit Answer",
+	incorrect = NULL,
+	rows = 3)
 ```
 
-### 
+###
 
 Your answer should look like:
 
@@ -156,9 +152,40 @@ dkane@MacBookPro projects %
 
 The details will differ. Don't worry if you have a different version of Git installed.
 
-[*Pro Git*](https://git-scm.com/book/en/v2) is the best reference book for Git and GitHub.
+If this fails, you need to install [Git](https://git-scm.com/) by following the instructions from the [Install Git](https://happygitwithr.com/install-git.html) chapter in [*Happy Git and GitHub for the useR*](https://happygitwithr.com/).
 
 ### Exercise 2
+
+If `git --version` worked in the previous exercise, you can skip this question. 
+
+If it failed and you have just installed Git, then you need to quit and restart Positron so that it has a chance to "recognize" that Git is now installed. 
+
+(Note that restarting Positron is **not** the same as restarting your R session **within** your Positron instance. To quit Positron you need to go to the `Positron -> Quit Positron` menu item.)
+
+If you need to restart Positron, you will then need to do two things. First, restart this tutorial with:
+
+````
+learnr::run_tutorial("04-github-1", "positron.tutorials")
+````
+
+Second, start a new Positron window with `File -> New Window`.
+
+Run `git --version` in the Terminal to make sure that Git is installed and accessible. CP/CR.
+
+```{r setting-up-git-2}
+question_text(NULL,
+    answer(NULL, correct = TRUE),
+    allow_retry = TRUE,
+    try_again_button = "Edit Answer",
+    incorrect = NULL,
+    rows = 2)
+```
+
+### 
+
+[*Pro Git*](https://git-scm.com/book/en/v2) is the best reference book for Git and GitHub.
+
+### Exercise 3
 
 The next step is to create a GitHub account by following the instructions at the [GitHub homepage](https://github.com/). 
 
@@ -168,7 +195,7 @@ We recommend using a permanent email address for this account, not one which you
 
 Copy your GitHub account URL in the field below.
 
-```{r setting-up-git-2}
+```{r setting-up-git-3}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -187,27 +214,33 @@ https://github.com/your-username
 
 [Git](https://en.wikipedia.org/wiki/Git) is "software for tracking changes in any set of files, usually used for coordinating work among programmers collaboratively developing source code during software development."
 
-### Exercise 3
+### Exercise 4
 
-Now that you have your GitHub account, you need to connect it to Positron. The first step of doing this is to give Positron your GitHub account user name and email.
+Now that you have your GitHub account, you need to connect it to Positron. The first step of doing this is to give Git your GitHub email (which is how it connects you to GitHub) and a GitHub username, which does not have to be the same as your Git username, and generally won't be.
 
 ### 
-
-<!-- Ran into an issue here where `usethis::use_git_config(user.name = "your-username", user.email = "your@email.org")` would produce an error if you had multiple `user.name`s or `user.email`s saved (this can be checked using `usethis::git_sitrep()`). To fix this, I first used the terminal command `git config --global --replace-all user.name "newname"`. However, there seemed to be an issue where the terminal would say it is replaced but it wasn't being recognized. In the end, I was able to locate the actual global Git config file under `C:/User/username/` and edit it directly. In the file, there were fields formatted like `name = ...` and `email = ...`. Deleting these lines completely seemed to work correctly. Afterwards (Good to restart R session here), running `usethis::git_sitrep()` will show that the fields are not set and you should now be able to run `usethis::use_git_config(user.name = "your-username", user.email = "your@email.org")` without error. -->
 
 In the Console, run this command, substituting the email and user name you used for your GitHub account:
 
 ```         
-usethis::use_git_config(user.name = "your-username", user.email = "your@email.org")
+usethis::use_git_config(user.name = "Your Name", user.email = "your@email.org")
 ```
 
-Note that this will not return anything. As long as you don't get an error message, it (probably) worked.
+Note that this will not return anything. As long as you don't get an error message, it (probably) worked. When I ran this command, I used:
+
+```         
+usethis::use_git_config(user.name = "David Kane", user.email = "dave.kane@gmail.com")
+```
+
+This Git username ("David Kane") is not the same as my GitHub username ("davekane9"), but the email for both ("dave.kane@gmail.com") is the same.
 
 ### 
 
-Run `git config --global user.name` in the *Terminal* to make sure your computer remembers your GitHub username. CP/CR.
+Run `git config --global user.name` in the *Terminal* to make sure your computer remembers your Git username. Note that you should be always be working in the Terminal associated with your new Positron window, not in the Terminal in the window in which this tutorial is being run.
 
-```{r setting-up-git-3}
+CP/CR.
+
+```{r setting-up-git-4}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -228,11 +261,13 @@ dkane@MacBookPro projects %
 
 Of course, it should be your username, not mine!
 
-### Exercise 4
+### Exercise 5
 
-Run `git config --global user.email` in the *Terminal* to make sure your GitHub email is stored too. CP/CR.
+Run `git config --global user.email` in the *Terminal* to make sure your Git email is stored too. And make sure that it is the same as the email you used to create your GitHub account.
 
-```{r setting-up-git-4}
+CP/CR.
+
+```{r setting-up-git-5}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -251,17 +286,15 @@ dave.kane@gmail.com
 dkane@MacBookPro projects % 
 ```
 
-Now, your GitHub username and email are stored so that your computer can automate a lot of the tedious steps required to communicate with GitHub.
+Now, your Git username and email are stored so that your computer can automate a lot of the tedious steps required to communicate with GitHub.
 
-### Exercise 5
+### Exercise 6
 
 **Note:** Make sure you received the expected outputs of the name and email associated with your GitHub account in the previous two exercises.
 
 If, in our metaphor, GitHub is your Google Drive, then GitHub repositories, or "repos," are the Google folders, the location in which we store our work. Let's make a practice repo!
 
 To begin, sign into GitHub and go to the homepage: `www.github.com`. Click the green "New" button on the upper left side of the page.
-
-
 
 ```{r}
 include_graphics("images/github_new_repo.png")
@@ -273,7 +306,7 @@ Name your repository `First-Repo`. Then, select the "public" option for your rep
 include_graphics("images/new-repo-1.png")
 ```
 
-Then, check the box saying "Add a README file". [README](https://en.wikipedia.org/wiki/README) is a document where programmers explain details of their project. When in doubt follow [these instructions](https://happygitwithr.com/push-pull-github.html#make-a-repo-on-github).
+Then, check the box saying "Add a README file". A [README](https://en.wikipedia.org/wiki/README) is a document where programmers explain details of their project. When in doubt follow [these instructions](https://happygitwithr.com/push-pull-github.html#make-a-repo-on-github).
 
 
 ```{r}
@@ -286,7 +319,7 @@ After you've done that, go ahead and click "Create repository" to create your fi
 
 GitHub should have directed you to a page called the project page after creating the repo. Copy and paste the URL of the project page below.
 
-```{r setting-up-git-5}
+```{r setting-up-git-6}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -303,9 +336,9 @@ Your answer should look like:
 github.com/davidkane9/First-Repo
 ```
 
-The "public" option means that anyone will be able to view the repository. But only you can edit it. You might have noticed "Add .gitignore" as another option, but we will never check this box because Positron will automatically create a `.gitignore` file for us when we connect the GitHub repo to an R project on our computer.
+The "public" option means that anyone will be able to view the repository. But only you can edit it. You might have noticed "Add .gitignore" as another option, but we generally prefer to create our own `.gitignore` file.
 
-### Exercise 6
+### Exercise 7
 
 The next step will be to create the exact same project on your local computer through the process of **cloning**. By having a local and a GitHub version, you can edit your project on your computer and then send all the changes you've made to GitHub. This process ensures that the GitHub version is synced up with your local version.
 
@@ -317,7 +350,7 @@ include_graphics("images/repo_clone.png")
 
 Paste the link below.
 
-```{r setting-up-git-6}
+```{r setting-up-git-7}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -336,11 +369,11 @@ https://github.com/davidkane9/First-Repo.git
 
 This link points to your project folder on GitHub. It is slightly different from the URL of the project page because the `.git` suffix tells you that it's a special GitHub object, not a webpage.
 
-### Exercise 7
+### Exercise 8
 
 Read through all these steps before starting the process of connecting your repo to a project on your computer.
 
--   Click the `New` menu dropdown item from top left of the Positron window.
+-   Click the `New` menu dropdown item from top left of the new Positron window. That is, as always, you are working in the *other* Positron window, not the one which is running this tutorial.
 
 ```{r}
 include_graphics("images/new-git-1.png")
@@ -348,7 +381,7 @@ include_graphics("images/new-git-1.png")
 
 -   Select `New Folder from Git ...`.
 
--   Paste in your GitHub URL to the  "Git repository URL" box. Ensure that the "Create folder ..." box specifies your `projects` folder. Click the "Open in new window" box.
+-   Paste in your GitHub URL to the  "Git repository URL" box. Ensure that the "Create folder ..." box specifies your `projects` folder. 
 
 ```{r}
 include_graphics("images/new-from-git.png")
@@ -356,10 +389,10 @@ include_graphics("images/new-from-git.png")
 
 -   Click "OK."
 
-This will open the `First-Repo` project in a new Positron window. 
+This should close your other Positron window and then re-open it in the `First-Repo` project. 
 
 
-### Exercise 8
+### Exercise 9
 
 **All further questions in this tutorial should be completed in the `First-Repo` project, not in the Positron window in which this tutorial is running.**
 
@@ -375,7 +408,7 @@ Select the latest R version from the menu. (If you have more than one R version 
 
 Either way, R should start in the Console. Copy/paste everything in the Console from "Type 'demo()'" through the prompt.
 
-```{r setting-up-git-8}
+```{r setting-up-git-9}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -396,11 +429,11 @@ Type 'q()' to quit R.
 >
 ````
 
-### Exercise 9
+### Exercise 10
 
 Confirm that your setup is correct. In the Terminal (not the Console), run `git remote -v`. CP/CR.
 
-```{r setting-up-git-9}
+```{r setting-up-git-10}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -417,15 +450,16 @@ origin  https://github.com/davidkane9/First-Repo.git (fetch)
 origin  https://github.com/davidkane9/First-Repo.git (push)
 dkane@MacBookPro First-Repo % 
 ```
-Note how my prompt has changed so that it ends with `First-Repo` because this new window opened with `First-Repo` as the current working directory.
 
-Don't worry too much about the details of "origin," "fetch," and "push." You've successfully linked a repo to an Positron Project!
+Note how my prompt has changed so that it ends with `First-Repo` because this new Positron window opened with `First-Repo` as the current working directory.
 
-### Exercise 10
+Don't worry too much about the details of "origin," "fetch," and "push." You've successfully linked a repo to an Positron project!
 
-<!-- DK: Revisit this to confirm it works. Update images. -->
+### Exercise 11
 
-You have linked your GitHub repo to your R project, but you haven't proven that you are someone with editing access to the project. If we just let anyone with the GitHub link edit our repo, that's obviously going to lead to problems. This is why we use something called a **p**ersonal **a**ccess **t**oken, or a **PAT**.
+<!-- Revisit this to confirm it works. Update images. -->
+
+You have linked your GitHub repo to your project, but you haven't proven that you are someone with editing access to the project. If we just let anyone with the GitHub link edit our repo, that's obviously going to lead to problems. This is why we use something called a **p**ersonal **a**ccess **t**oken, or **PAT**.
 
 ### 
 
@@ -447,7 +481,7 @@ include_graphics("images/pat.png")
 
 Press "Generate Token" at the bottom of the page to finalize your PAT. If you have trouble, the function `usethis::gh_token_help()` may be helpful.
 
-### Exercise 11
+### Exercise 12
 
 Now that you have created your PAT, you should first temporarily copy it somewhere you have easy access to. We will need to store it somewhere so that Positron can "see" it.
 
@@ -455,11 +489,11 @@ Run `gitcreds::gitcreds_set()` in the Console and follow the prompts, providing 
 
 ### 
 
-Restart your R session with `Cmd/Ctrl + Shift + 0`. (This is not the same thing as restarting Positron.) You could also use `Cmd/Ctrl + Shift + 0` to restart R. On Windows, this would be `Ctrl + Shift + F10`.
+Restart your R session with `Cmd/Ctrl + Shift + 0`. This is **not** the same thing as restarting Positron.
 
 Run `usethis::git_sitrep()` in the Console. CP/CR.
 
-```{r setting-up-git-11}
+```{r setting-up-git-12}
 question_text(NULL,
     answer(NULL, correct = TRUE),
     allow_retry = TRUE,
@@ -485,7 +519,7 @@ See "[Managing Git(Hub) Credentials](https://usethis.r-lib.org/articles/git-cred
 ## Using Git
 ### 
 
-Having set up git, we can now practice using it.
+Having set up Git, we can now practice using it.
 
 ### Exercise 1
 
@@ -534,11 +568,12 @@ dkane@MacBookPro First-Repo % ls
 README.md
 dkane@MacBookPro First-Repo % 
 ````
+
 There is only one (non-hidden) file in the directory, `README.md`. It was created when we initially started the repo. Recall how we checked the box saying "Add a README file". If we had not done so, there would not be any files in the directory. 
 
 ### Exercise 3
 
-At the Terminal, run `ls -a`. The `a` option tells `ls` to show all directories/files, including ones that are hidden, i.e., which start with a dot, meaning a`.`. CP/CR.
+At the Terminal, run `ls -a`. The `a` option tells `ls` to show all directories/files, including ones that are hidden, i.e., which start with a dot, meaning a `.`. CP/CR.
 
 ```{r using-git-3}
 question_text(NULL,
@@ -578,19 +613,13 @@ question_text(NULL,
 
 ###
 
-Your answer should look like:
+Your answer should have one line: `# First-Repo`.
 
-````
-dkane@MacBookPro First-Repo % cat README.md 
-# First-Repo%                                                                                   
-dkane@MacBookPro First-Repo % 
-````
-
-The `README.md` file is a markdown file with only one line, a header with the name of the repo. It, unfortunately, lacks an empty line at the end of the file, thereby causing my prompt to "wrap" around in the print out above.
+The `README.md` file is a markdown file with only one line, a header with the name of the repo. It, unfortunately, lacks an empty line at the end of the file, thereby probably causing your prompt to "wrap" around after the `cat` command.
 
 ### Exercise 5
 
-Open `README.md` in the Editor. The easiest way to do so is to click the Explorer button in the Activity Bar on the lefthand side of the Positron Window. This opens the File pane, in which you can see the files in the current directory.
+Open `README.md` in the Editor. The easiest way to do so is to click the Explorer button in the Activity Bar on the left-hand side of the Positron window. This opens the Explorer pane, in which you can see the files in the current directory.
 
 ```{r}
 include_graphics("images/README-1.png")
@@ -611,15 +640,7 @@ question_text(NULL,
 
 ###
 
-Your answer should look like:
-
-````
-dkane@MacBookPro First-Repo % cat README.md
-# First-Repo
-
-David Kane is a data maestro!
-dkane@MacBookPro First-Repo % 
-````
+Your answer should now have three lines.
 
 You can close the Files pane by clicking the Explorer button again. Each of the buttons in the Activity Bar opens up a different pane.
 
@@ -673,7 +694,7 @@ The Positron window has changed quite a bit. The Viewer tab has appeared, showin
 include_graphics("images/README-3.png")
 ```
 
-We can stop the monitoring of `README.md` by using `Cntrl-C`.  Once we do, the Viewer tab is empty, so we can close the entire Secondary Activity Bar.
+We can stop the monitoring of `README.md` by using `Ctrl + c`.  Once we do, the Viewer tab is empty, so we can close the entire Secondary Activity Bar.
 
 From the Terminal, run `ls`. CP/CR.
 
@@ -750,8 +771,7 @@ tippy.umd.min.js
 dkane@MacBookPro First-Repo % 
 ````
 
-Whenever you render a document using Quarto, it creates a directory called `base-name-of-your-file_files`. Since the base name of `README.md` is `README`, the new directory created is `README_files`. This directory is filled with the programs/information/etc which helped to turn `README.md` into `README.html`. That file is filled with confusing stuff that we should ignore. In fact, we usually don't even want it monitored by Git or stored on GitHub.
-
+Whenever you render a document using Quarto, it creates a directory called `base-name-of-your-file_files`. Since the base name of `README.md` is `README`, the new directory created is `README_files`. This directory is filled with the programs/information/etc which helped to turn `README.md` into `README.html`. This is mostly confusing stuff that we should ignore. In fact, we usually don't even want it monitored by Git or stored on GitHub.
 
 ### Exercise 9
 
@@ -783,7 +803,7 @@ Because `.gitignore` begins with a `.`, it is a hidden file. It would not appear
 
 ### Exercise 10
 
-The purpose of the `.gitignore` file is to specify those files/directories which **git** should **ignore**. Add a new line to the fle, `README_file`, followed by an empty line. Save your changes.
+The purpose of the `.gitignore` file is to specify those files/directories which **git** should **ignore**. Add a new line to the file, `README_files`, followed by an empty line. Save your changes.
 
 From the Terminal, run `cat .gitignore`. CP/CR.
 
@@ -814,7 +834,7 @@ Note the change in the Source Control pane!
 include_graphics("images/README-5.png")
 ```
 
-Now, according to git, there have been only three changes to the repo. (Of course, there have been more changes, but we are ignoring anything which resides in `README_files`.) One file, `README.md`, has been modified (M). Two files, `README.html` and `.gitigore`, are untracked (U).
+Now, according to Git, there have been only three changes to the repo. (Of course, there have been more changes, but Git is ignoring anything which resides in `README_files`.) One file, `README.md`, has been modified (M). Two files, `README.html` and `.gitigore`, are untracked (U).
 
 ### Exercise 11
 
@@ -841,10 +861,9 @@ question_text(NULL,
 
 Clicking this button gets rid of your changes since the last time you told Git to save them. 
 
-
 ### Exercise 12
 
-Hold your cursor over the symbol (a plus sign) next to the "Discard Changes" button. What is the name for this button?
+Hold your cursor over the symbol --- `+`, a plus sign --- next to the "Discard Changes" button. What is the name for this button?
 
 ```{r using-git-12}
 question_text(NULL,
@@ -861,7 +880,7 @@ Saving changes in Git is, in theory, a two-step process. The first step is to "s
 
 ### Exercise 13
 
-The letters at the end of the line for the file names indicate that `.gitignore` and `README.html` are **U**ntracked and that `README.md` is **M**odified. We can "commit" these files by hitting the Commit buttom. Before doing so, hold your cursor over the button. What does it say?
+The letters at the end of the line for the file names indicate that `.gitignore` and `README.html` are **U**ntracked and that `README.md` is **M**odified. We can "commit" these files by hitting the Commit button. Before doing so, hold your cursor over the button. What does it say?
 
 ```{r using-git-13}
 question_text(NULL,
@@ -872,7 +891,7 @@ question_text(NULL,
 	rows = 2)
 ```
 
-The word `main` references the "branch" of your repo that you are currently working on. We won't worry about branches for a while yet, but they are an important part of using git.
+The word `main` references the "branch" of your repo that you are currently working on. We won't worry about branches for a while yet, but they are an important part of using Git.
 
 ### Exercise 14
 
@@ -915,7 +934,7 @@ Date:   Sun Mar 9 15:46:04 2025 -0400
 dkane@MacBookPro First-Repo % 
 ````
 
-`git log` generates a log of all the Git actions we have taken. In this case, you can see that we have committed changes twice. The first changes involved the initial acceptance of `README.md`. This was done behind the scenes when we created the project by connecting to GitHub. The second change is the commit which we just pushed, the one which adds `.gitignore` and `README.html`, and also modifies `README.md`. 
+`git log` generates a record --- a "log" --- of all the Git actions we have taken. In this case, you can see that we have committed changes twice. The first changes involved the initial acceptance of `README.md`. This was done behind the scenes when we created the project by connecting to GitHub. The second change is the commit which we just pushed, the one which adds `.gitignore` and `README.html`, and also modifies `README.md`. 
 
 
 ### Exercise 15
@@ -926,7 +945,7 @@ The Source Control pane now looks like this:
 include_graphics("images/README-8.png")
 ```
 
-Although you have commited your changes to Git --- i.e., the changes have been made locally --- you still need to "push" the changes to GitHub.  Hover your cursor over the "Sync Changes" button. What does the pop-up say?
+Although you have committed your changes to Git --- i.e., the changes have been made locally --- you still need to "push" the changes to GitHub.  Hover your cursor over the "Sync Changes" button. What does the pop-up say?
 
 
 ```{r using-git-15}
@@ -991,17 +1010,14 @@ A term like "commit 969819f5c16d3776254121570a4853da45f174ba" gives us the addre
 
 If you look at the GitHub page for `First-Repo`, you will see that the changes have been pushed to GitHub. If your computer blows up, you won't lose any of your work.
 
-
-
 ## Publishing with GitHub Pages
 ### 
 
 Let's create a new GitHub repo, connect it our computer, create a Quarto document, publish it to the internet using [GitHub Pages](https://pages.github.com/), and then ensure our work is backed up to GitHub. 
 
-
 ### Exercise 1
 
-On your GitHub account, create a new repo named `repo-2`. Make sure it is public. Make sure to check the box for a README file. After clicking "Create," copy the URL after clicking the "Code" button.
+On your GitHub account, create a new repo named `repo-2`. Make sure it is public. Make sure to check the box for a README file. After clicking "Create," copy the URL after clicking on the "Code" button.
 
 What is the URL for the project?
 
@@ -1022,11 +1038,11 @@ My answer:
 https://github.com/davidkane9/repo-2.git
 ````
 
-No worries if you did not include the `.git` ending. The URL you go to when you want to look at the repo does not include `.git`, obviously. But, for connecting the repo to your computer, you need `.git`.
+No worries if you did not include the `.git` ending. The URL you go to when you want to look at the repo does not include `.git`, obviously. But, for connecting the repo to your computer, you need the `.git` suffix.
 
 ### Exercise 2
 
-In Positron, `File -> New Folder from Git...`. Use the project URL (with `.git`) to create a new project in your `projects` directory. Make sure to click the "Open in New Window" box.
+In Positron, `File -> New Folder from Git...`. Use the project URL (with `.git`) to create a new project in your `projects` directory. 
 
 Close the Positron welcome screen, if any.
 
@@ -1189,7 +1205,7 @@ Quarto is "Watching files for changes" at the Terminal. If you change and then r
 include_graphics("images/second-repo-3-b.png")
 ```
 
-We want to "free up" the Terminal so that we can issue some commands. So, when in the Terminal, use `Ctrl-C` to exit Quarto watching mode. CP/CR, but include the few lines above the `Ctrl-C` as well.
+We want to "free up" the Terminal so that we can issue some commands. So, when in the Terminal, use `Ctrl + c` to exit Quarto watching mode. CP/CR, but include the few lines above the `Ctrl + c` as well.
 
 ```{r publishing-with-github-pages-7}
 question_text(NULL,
@@ -1260,7 +1276,7 @@ tippy.umd.min.js
 dkane@macbook repo-2 % 
 ````
 
-If you know something about webpages, you will recognize some of these files. But we won't worry about those details.
+If you know something about web pages, you will recognize some of these files. But we won't worry about those details.
 
 ### Exercise 9
 
@@ -1367,7 +1383,7 @@ The commit itself has not changed. It has the same date/author/comment as before
 
 ### Exercise 12
 
-Add an R code chunk with `Cmd/Ctrl + option + i` to `analysis.qmd`. (Recall that "code chunk" and "code cell" mean the same thing.) In that chunk, put `library(tidyverse)`. `Cmd/Ctrl + Shift + K` to render the the document. Your Positron window should look like:
+Add an R code chunk in `analysis.qmd` by using the shortcut key `Cmd/Ctrl + option + i`. (Recall that "code chunk" and "code cell" mean the same thing.) In that chunk, put `library(tidyverse)`. `Cmd/Ctrl + Shift + K` to render the the document. Your Positron window should look like:
 
 ```{r}
 include_graphics("images/second-repo-7.png")
@@ -1566,11 +1582,11 @@ ggplot(mpg, aes(x = displ, y = hwy, color = class)) +
 
 Generative AI is the future of coding. You need to practice more.
 
-<!-- DK: Maybe we should publish first and then do the final commit. -->
+<!-- Maybe we should publish first and then do the final commit. -->
 
 ### Exercise 17
 
-If you click the Soure Control button, your Postitron window should look something like this:
+If you click the Source Control button, your Postitron window should look something like this:
 
 ```{r}
 include_graphics("images/second-repo-8.png")
@@ -1578,7 +1594,7 @@ include_graphics("images/second-repo-8.png")
 
 Commit your files and push them to GitHub. Don't forget the commit message. Don't forget that "push" means the same thing as "sync."
 
-Using `Ctrl-C` to stop the Quarto watching process. From the Terminal, run `git log -n 1`. CP/CR.
+Using `Ctrl + c` to stop the Quarto watching process. From the Terminal, run `git log -n 1`. CP/CR.
 
 ```{r publishing-with-github-pages-17}
 question_text(NULL,
@@ -1605,7 +1621,7 @@ We are being a little sloppy to equate "pushing" with "syncing." Strictly speaki
 
 ### Exercise 18
 
-Let's publish our results to [GitHub Pages](https://pages.github.com/). Before we do, go the GitHub repo for `repo-2`, click on the "Settings" top menu item and, after that, click on the "Pages" side menu item.
+Let's publish our results to [GitHub Pages](https://pages.github.com/). Before we do, go to the GitHub repo for `repo-2`, click on the "Settings" top menu item and, after that, click on the "Pages" side menu item.
 
 ```{r}
 include_graphics("images/second-repo-9.png")
@@ -1613,12 +1629,12 @@ include_graphics("images/second-repo-9.png")
 
 We won't modify these options by hand. But it is useful to know where the details are located.
 
-From the Terminal, run `quarto publish gh-pages analysis.qmd`. Respond with "Y" when it checks that you want to (This might take a minute to run.) 
+From the Terminal, run `quarto publish gh-pages analysis.qmd`. Respond with "Y" when it checks that you want to. (This might take a minute to run.) 
 
 CP/CR just the first 10 or so lines of what results.
 
 
-```{r publishing-with-github-pages-18-ex}
+```{r publishing-with-github-pages-18}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
@@ -1673,7 +1689,7 @@ output file: analysis.knit.md
 Go to your `repo-2` page on GitHub. Refresh the page. `quarto publish` has changed some of the items. Copy/paste all the text in the "Visit site" box.
 
 
-```{r publishing-with-github-pages-19-ex}
+```{r publishing-with-github-pages-19}
 question_text(NULL,
 	answer(NULL, correct = TRUE),
 	allow_retry = TRUE,
